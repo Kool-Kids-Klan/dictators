@@ -1,20 +1,18 @@
-import React, { FormEvent, useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import sha256 from 'crypto-js/sha256';
-import { useHistory } from 'react-router-dom';
-import './Login.css';
+import React, { FormEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { appState, usersState } from '../../../store/atoms';
+import { useHistory } from 'react-router-dom';
+import { usersState } from '../../../store/atoms';
+import './Auth.css';
 import LoaderButton from '../../LoaderButton';
 
-const Login = () => {
+const Register = () => {
   const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [, setAppState] = useRecoilState(appState);
-  const [users] = useRecoilState(usersState);
+  const [users, setUsers] = useRecoilState(usersState);
 
   function validateForm() {
     return email.length > 0 && password.length > 0;
@@ -24,18 +22,13 @@ const Login = () => {
     event.preventDefault();
 
     setIsLoading(true);
-    console.log(sha256(password));
-    if (users.some((user) => user.email === email && user.password === password)) {
-      setAppState({ authenticated: true });
-      history.push('/');
-    } else {
-      alert('invalid');
-      setIsLoading(false);
-    }
+    setUsers([...users, { email, password }]);
+    setIsLoading(false);
+    history.push('/confirm');
   }
 
   return (
-    <div className="Login">
+    <div className="Register Login">
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="email">
           <Form.Label>Email</Form.Label>
@@ -55,11 +48,11 @@ const Login = () => {
           />
         </Form.Group>
         <LoaderButton block type="submit" isLoading={isLoading} disabled={!validateForm()}>
-          Login
+          Sign up
         </LoaderButton>
       </Form>
     </div>
   );
 };
 
-export default Login;
+export default Register;

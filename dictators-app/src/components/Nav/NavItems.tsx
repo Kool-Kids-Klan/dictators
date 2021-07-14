@@ -12,7 +12,7 @@ const NavItems = () => {
 
   function handleLogout() {
     setAppState({ authenticated: false });
-    history.push('/');
+    history.push('/confirm');
   }
 
   if (authenticated) {
