@@ -1,10 +1,12 @@
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import React, { FormEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { usersState } from '../../../store/atoms';
+import './Login.css';
+import LoaderButton from '../../LoaderButton';
 
 const Register = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [users, setUsers] = useRecoilState(usersState);
@@ -16,11 +18,13 @@ const Register = () => {
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
+    setIsLoading(true);
     setUsers([...users, { email, password }]);
+    setIsLoading(false);
   }
 
   return (
-    <div className="Register">
+    <div className="Register Login">
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="email">
           <Form.Label>Email</Form.Label>
@@ -39,9 +43,9 @@ const Register = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button block size="lg" type="submit" disabled={!validateForm()}>
+        <LoaderButton block type="submit" isLoading={isLoading} disabled={!validateForm()}>
           Sign up
-        </Button>
+        </LoaderButton>
       </Form>
     </div>
   );
