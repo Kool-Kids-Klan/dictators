@@ -1,15 +1,16 @@
 import React, { FormEvent, useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import sha256 from 'crypto-js/sha256';
 import { useHistory } from 'react-router-dom';
 import './Login.css';
 import { useRecoilState } from 'recoil';
 import { appState, usersState } from '../../../store/atoms';
+import LoaderButton from '../../LoaderButton';
 
 const Login = () => {
   const history = useHistory();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [, setAppState] = useRecoilState(appState);
@@ -22,12 +23,14 @@ const Login = () => {
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
+    setIsLoading(true);
     console.log(sha256(password));
     if (users.some((user) => user.email === email && user.password === password)) {
       setAppState({ authenticated: true });
       history.push('/');
     } else {
       alert('invalid');
+      setIsLoading(false);
     }
   }
 
@@ -51,9 +54,9 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button block size="lg" type="submit" disabled={!validateForm()}>
+        <LoaderButton block type="submit" isLoading={isLoading} disabled={!validateForm()}>
           Login
-        </Button>
+        </LoaderButton>
       </Form>
     </div>
   );
