@@ -4,11 +4,14 @@ var char_choice = document.getElementById("game_board").getAttribute("char_choic
 var connectionString = 'ws://' + window.location.host + '/ws/play/' + roomCode + '/';
 var gameSocket = new WebSocket(connectionString);
 // Game board for maintaing the state of the game
-var gameBoard = [
-    -1, -1, -1,
-    -1, -1, -1,
-    -1, -1, -1,
-];
+// var gameBoard = [
+//     -1, -1, -1,
+//     -1, -1, -1,
+//     -1, -1, -1,
+// ];
+
+let gameBoard = []
+
 // Winning indexes.
 winIndices = [
     [0, 1, 2],
@@ -43,6 +46,8 @@ for (var i = 0; i < elementArray.length; i++){
 
 // Make a move
 function make_move(index, player){
+    console.log('this is game board', gameBoard)
+
     index = parseInt(index);
     let data = {
         "event": "MOVE",
@@ -91,11 +96,11 @@ function make_move(index, player){
 
 // function to reset the game.
 function reset(){
-    gameBoard = [
-        -1, -1, -1,
-        -1, -1, -1,
-        -1, -1, -1,
-    ];
+    // gameBoard = [
+    //     -1, -1, -1,
+    //     -1, -1, -1,
+    //     -1, -1, -1,
+    // ];
     moveCount = 0;
     myturn = true;
     document.getElementById("alert_move").style.display = 'inline';
@@ -128,10 +133,14 @@ function checkWinner(){
     return win;
 }
 
+const tick = () => {
+
+}
+
 // Main function which handles the connection
 // of websocket.
 function connect() {
-    gameSocket.onopen = function open() {
+    gameSocket.onopen = function open(event) {
         console.log('WebSockets connection created.');
         // on websocket open, send the START event.
         gameSocket.send(JSON.stringify({
@@ -150,6 +159,7 @@ function connect() {
     gameSocket.onmessage = function (e) {
         // On getting the message from the server
         // Do the appropriate steps on each event.
+        console.log('on message event', e)
         let data = JSON.parse(e.data);
         data = data["payload"];
         let message = data['message'];
@@ -163,18 +173,24 @@ function connect() {
                 reset();
                 break;
             case "MOVE":
-                if(message["player"] != char_choice){
+                if(message["player"] !== char_choice){
                     make_move(message["index"], message["player"])
                     myturn = true;
                     document.getElementById("alert_move").style.display = 'inline';
                 }
+                break;
+            case "GAME_BOARD":
+                gameBoard = message;
+                break;
+            case "TICK":
+                console.log(message);
                 break;
             default:
                 console.log("No event")
         }
     };
 
-    if (gameSocket.readyState == WebSocket.OPEN) {
+    if (gameSocket.readyState === WebSocket.OPEN) {
         gameSocket.onopen();
     }
 }
