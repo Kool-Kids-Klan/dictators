@@ -1,13 +1,18 @@
 import React from 'react';
 import './Game.css';
+import { useRecoilState } from 'recoil';
 import Square from './Square';
+import { Coor, gameState, premovesState } from '../../store/atoms';
 
 const Game = () => {
+  const [premoves, setPremoves] = useRecoilState(premovesState);
+  const [{ selected }, setSelected] = useRecoilState(gameState);
+
   const game = [
-    [{ number: 1, color: 'blue' }, { number: 120, color: 'blue' }, {}, { number: 10, color: 'red' }],
-    [{ number: 1, color: 'blue' }, { number: 120, color: 'blue' }, { number: 1, color: 'red' }, { number: 10, color: 'red' }],
-    [{ number: 1, color: 'blue' }, {}, { number: 1, color: 'red' }, { number: 10, color: 'green' }],
-    [{}, { number: 120, color: 'blue' }, { number: 1, color: 'red' }, { number: 10, color: 'red' }],
+    [{ army: 1, owner: 'blue', terrain: 'barracks' }, { army: 120, owner: 'blue' }, {}, { army: 10, owner: 'red' }],
+    [{ army: 1, owner: 'blue' }, { army: 120, owner: 'blue', terrain: 'capital' }, { army: 1, owner: 'red', terrain: 'mountains' }, { army: 10, owner: 'red' }],
+    [{ army: 1, owner: 'blue' }, {}, { army: 1, owner: 'red' }, { army: 10, owner: 'green' }],
+    [{ terrain: 'capital' }, { army: 120, owner: 'blue' }, { army: 1, owner: 'red', terrain: 'barracks' }, { army: 10, owner: 'red' }],
   ];
 
   let y = 0;
@@ -17,10 +22,11 @@ const Game = () => {
       x += 1;
       return (
         <Square
-          key={[x - 1, y].toString()}
-          coords={[x - 1, y]}
-          number={square.number}
-          color={square.color}
+          key={[y, x - 1].toString()}
+          coords={[y, x - 1]}
+          army={square.army}
+          owner={square.owner}
+          terrain={square.terrain}
         />
       );
     });
@@ -31,6 +37,25 @@ const Game = () => {
       </tr>
     );
   });
+
+  document.onkeydown = (e: KeyboardEvent) => {
+    if (!selected) {
+      return;
+    }
+
+    let x: Coor | undefined = selected;
+    if (e.code === 'KeyW' && selected[0] > 0) {
+      x = [selected[0] - 1, selected[1]];
+    } else if (e.code === 'KeyS' && selected[0] < game.length - 1) {
+      x = [selected[0] + 1, selected[1]];
+    } else if (e.code === 'KeyA' && selected[1] > 0) {
+      x = [selected[0], selected[1] - 1];
+    } else if (e.code === 'KeyD' && selected[1] < game[0].length - 1) {
+      x = [selected[0], selected[1] + 1];
+    }
+    setPremoves([...premoves, { from: selected, to: x }]);
+    setSelected({ selected: x });
+  };
 
   return (
     <div className="Game container-fluid">

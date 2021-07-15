@@ -8,7 +8,7 @@ import Routes from './Routes';
 function App() {
   return (
     <RecoilRoot>
-      <div className="App container py-3">
+      <div className="App container-fluid py-3">
         <Navbar />
         <Routes />
       </div>

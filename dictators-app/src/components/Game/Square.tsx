@@ -3,19 +3,22 @@ import { useRecoilState } from 'recoil';
 import { gameState } from '../../store/atoms';
 
 interface ISquare {
-  number?: number,
-  color?: string,
+  army?: number,
+  owner?: string,
+  terrain?: string,
   coords: [number, number]
 }
 
 const Square: React.FC<ISquare> = (props) => {
-  const { number, color, coords } = props;
+  const {
+    army, owner, terrain, coords,
+  } = props;
 
-  const [selected, selectSquare] = useRecoilState(gameState);
-  const selectClass = (selected.selected === coords) ? 'selected' : '';
+  const [{ selected }, selectSquare] = useRecoilState(gameState);
+  const selectClass = (selected && coords[0] === selected[0] && coords[1] === selected[1]) ? 'selected' : '';
 
   return (
-    <td className={`${color} ${selectClass}`} onClick={() => selectSquare({ selected: coords })}>{number}</td>
+    <td className={`${owner} ${terrain} ${selectClass}`} onClick={() => selectSquare({ selected: coords })}>{army}</td>
   );
 };
 

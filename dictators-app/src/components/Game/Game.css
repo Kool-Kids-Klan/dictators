@@ -7,6 +7,7 @@ td {
     width: 50px;
 
     background-color: grey;
+    background-size: cover;
 
     text-align: center;
     color: white;
@@ -30,4 +31,16 @@ td:hover {
 
 .green {
     background-color: green;
+}
+
+.barracks {
+    background-image: url("../../resources/images/swords.png");
+}
+
+.mountains {
+    background-image: url("../../resources/images/snowed-mountains.png");
+}
+
+.capital {
+    background-image: url("../../resources/images/crowns.png");
 }

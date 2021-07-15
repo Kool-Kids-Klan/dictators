@@ -9,8 +9,15 @@ interface IUser {
   password: String
 }
 
+export type Coor = [number, number];
+
 interface IGame {
-  selected?: [number, number]
+  selected?: Coor
+}
+
+interface IPremove {
+  from: Coor,
+  to: Coor
 }
 
 export const usersState = atom<IUser[]>({
@@ -37,4 +44,9 @@ export const appState = atom<IApp>({
 export const gameState = atom<IGame>({
   key: 'game',
   default: {},
+});
+
+export const premovesState = atom<IPremove[]>({
+  key: 'premoves',
+  default: [],
 });
