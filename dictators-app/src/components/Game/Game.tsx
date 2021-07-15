@@ -44,16 +44,24 @@ const Game = () => {
     }
 
     let x: Coor | undefined = selected;
+    let direction = '';
     if (e.code === 'KeyW' && selected[0] > 0) {
       x = [selected[0] - 1, selected[1]];
+      direction = 'up';
     } else if (e.code === 'KeyS' && selected[0] < game.length - 1) {
       x = [selected[0] + 1, selected[1]];
+      direction = 'down';
     } else if (e.code === 'KeyA' && selected[1] > 0) {
       x = [selected[0], selected[1] - 1];
+      direction = 'left';
     } else if (e.code === 'KeyD' && selected[1] < game[0].length - 1) {
       x = [selected[0], selected[1] + 1];
+      direction = 'right';
+    } else if (e.code === 'KeyQ') {
+      setPremoves([]);
+      return;
     }
-    setPremoves([...premoves, { from: selected, to: x }]);
+    setPremoves([...premoves, { from: selected, to: x, direction }]);
     setSelected({ selected: x });
   };
 

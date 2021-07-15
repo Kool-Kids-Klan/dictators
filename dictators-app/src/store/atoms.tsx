@@ -17,7 +17,8 @@ interface IGame {
 
 interface IPremove {
   from: Coor,
-  to: Coor
+  to: Coor,
+  direction: string
 }
 
 export const usersState = atom<IUser[]>({
