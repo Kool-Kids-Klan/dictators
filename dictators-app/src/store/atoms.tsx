@@ -9,6 +9,10 @@ interface IUser {
   password: String
 }
 
+interface IGame {
+  selected?: [number, number]
+}
+
 export const usersState = atom<IUser[]>({
   key: 'user',
   default: [
@@ -28,4 +32,9 @@ export const appState = atom<IApp>({
   default: {
     authenticated: false,
   },
+});
+
+export const gameState = atom<IGame>({
+  key: 'game',
+  default: {},
 });
