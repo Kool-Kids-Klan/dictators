@@ -1,5 +1,5 @@
 """
-ASGI config for dictators project.
+ASGI config for dictators_project project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -14,7 +14,7 @@ from django.core.asgi import get_asgi_application
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dictators.dictators.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dictators_project.dictators_project.settings')
 
 # application = get_asgi_application()
 application = ProtocolTypeRouter({

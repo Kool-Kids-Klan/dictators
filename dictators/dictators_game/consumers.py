@@ -23,11 +23,6 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def create_game_board(self):
-        # serializer = GameBoardSerializer(data={'game_board': [-1, -1, -1, -1, -1, -1, -1, -1, -1]})
-        # serializer.is_valid(raise_exception=True)
-        # game_board = serializer.save()
-        # print('this is game_board', game_board)
-
         game_board = GameBoard.objects.create(game_board=[-1, -1, -1, -1, -1, -1, -1, -1, -1])
         return game_board
 
