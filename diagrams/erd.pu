@@ -1,0 +1,40 @@
+@startuml erd
+
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity "User" as user {
+  *id : number <<generated>>
+  --
+  *username : varchar
+  *emailAaddress : varchar
+  *createdAt : datetime
+  *gamesPlayed : number
+  *gamesWon : number
+  *passwordHash : string
+  *passwordSalt : string
+}
+
+entity "Game" as game {
+  *id : number <<generated>> 
+  --
+  *createdAt : datetime
+  *winner : User
+  *replayData : blob
+}
+
+entity "GameParticipant" as part {
+  *id : number <<generated>>
+  --
+  *userId : number
+  *gameId : number
+}
+
+
+user ||..o{ part : is participant
+game ||..|{ part : in games
+
+@enduml
