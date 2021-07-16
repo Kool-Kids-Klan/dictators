@@ -1,30 +1,78 @@
 import json
 import asyncio
 
+from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from channels.db import database_sync_to_async
+
+from dictators.dictators_game.services.map_generator import generate_map
 
 
 class DictatorsConsumer(AsyncJsonWebsocketConsumer):
-    @database_sync_to_async
-    def db_tick(self, game_board):
-        return game_board.tick(addition=10)
+    def __init__(self):
+        super(DictatorsConsumer, self).__init__()
+        self.room_name = ''
+        self.room_group_name = ''
+        self.task = None
 
-    async def tick(self, game_board):
+    async def tick(self, game_map):
         while True:
-            await self.db_tick(game_board)
-            await self.send_json(content={'payload': {'message': 'hello', 'event': 'TICK'}})
+        #     await self.send_json(content={'payload': {'message': 'hello', 'event': 'TICK'}})
+            await self.channel_layer.group_send(self.room_group_name, {
+                'type': 'send_message',
+                'message': '',
+                'event': 'TICK'
+            })
+            print('tick is happening')
             await asyncio.sleep(5)
+        # await self.channel_layer.group_send(self.room_group_name, {
+        #     'type': 'send_message',
+        #     'message': '',
+        #     'event': 'TICK'
+        # })
+        # print('ticking')
 
-    @database_sync_to_async
-    def create_game_board(self):
-        game_board = GameBoard.objects.create(game_board=[-1, -1, -1, -1, -1, -1, -1, -1, -1])
-        return game_board
+    def stop_tick(self):
+        print('stopping tick')
+        if self.task:
+            self.task.cancel()
+
+    @staticmethod
+    def map_to_json(game_map):
+        map_dict = []
+        for row in game_map:
+            row_dict = []
+            for tile in row:
+                tile_dict = {
+                    'army': tile.army,
+                    'owner': tile.owner,
+                    'terrain': tile.terrain
+                }
+                row_dict.append(tile_dict)
+            map_dict.append(row_dict)
+        return map_dict
+
+    async def start_game(self):
+        game_map = await sync_to_async(generate_map)(16, 4, 8, 0)
+        game_map_json = self.map_to_json(game_map)
+        await self.channel_layer.group_send(self.room_group_name, {
+            'type': 'send_message',
+            'message': game_map_json,
+            'event': 'LOAD_MAP'
+        })
+        # await self.tick(game_map)
+
+    async def add_user_to_lobby(self):
+        my_user = {'name': 'revolko', 'color': 'red'}
+        await self.channel_layer.group_send(self.room_group_name, {
+            'type': 'send_message',
+            'message': my_user,
+            'event': 'JOIN_USER'
+        })
 
     async def connect(self):
         print('User is trying to connect to room')
-        print('scope is', self.scope.keys())
 
+        print('this is scope', self.scope)
 
         self.room_name = self.scope['url_route']['kwargs']['room_code']
         self.room_group_name = f'room_{self.room_name}'
@@ -36,17 +84,19 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         )
         await self.accept()
 
-        # serializer = GameBoardSerializer(data={'game_board': [-1, -1, -1, -1, -1, -1, -1, -1, -1]})
-        # serializer.is_valid(raise_exception=True)
-        # game_board = serializer.save()
-        game_board = await self.create_game_board()
+        # await self.add_user_to_lobby()
+        # game_map = generate_map(16, 4, 8, 0)
+        # print('This is generated map', game_map)
+        # print(await self.map_to_json(game_map))
 
-        await self.send_json(content={'payload': {'message': game_board.as_json(), 'event': 'GAME_BOARD'}})
-        await self.tick(game_board)
+        # await self.send_json(content={'payload': {'message': await self.map_to_json(game_map),
+        #                                           'event': 'GAME_BOARD'}})
+        # await self.tick(game_map)
 
     async def disconnect(self, close_code):
         print("Disconnected")
         # Leave room group
+        self.stop_tick()
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -83,6 +133,22 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                 'message': message,
                 'event': "END"
             })
+
+        if event == 'START_GAME':
+            print('should start the game')
+            await self.start_game()
+            game_map = []
+            loop = asyncio.get_event_loop()
+            # loop.call_later(5, self.stop_tick)
+            self.task = loop.create_task(self.tick(game_map))
+            # await self.tick(game_map)
+            # try:
+            #     loop.run_until_complete(self.task)
+            # except asyncio.CancelledError:
+            #     pass
+
+        if event == 'JOIN_ROOM':
+            await self.add_user_to_lobby()
 
     async def send_message(self, res):
         """ Receive message from room group """

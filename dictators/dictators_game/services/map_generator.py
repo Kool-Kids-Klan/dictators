@@ -184,6 +184,6 @@ def draw_map(M: MAP_T) -> None:
     print("===========================")
 
 
-sample_map = generate_map(16, 4, 8, 100)
-draw_map(sample_map)
+# sample_map = generate_map(16, 4, 8, 100)
+# draw_map(sample_map)
 
