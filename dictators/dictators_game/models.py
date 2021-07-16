@@ -11,9 +11,9 @@ class User(models.Model):
     password_hash = models.TextField()
     password_salt = models.TextField()
     email_address = models.EmailField()
-    created_at = models.DateTimeField()
-    games_played = models.IntegerField()
-    games_won = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    games_played = models.IntegerField(default=0)
+    games_won = models.IntegerField(default=0)
 
 
 class Game(models.Model):

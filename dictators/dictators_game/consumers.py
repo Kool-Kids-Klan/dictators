@@ -4,11 +4,6 @@ import asyncio
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 
-from django.core import serializers
-
-from dictators.dictators_game.serializers import GameBoardSerializer
-from dictators.dictators_game.models import GameBoard
-
 
 class DictatorsConsumer(AsyncJsonWebsocketConsumer):
     @database_sync_to_async
