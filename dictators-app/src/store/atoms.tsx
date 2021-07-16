@@ -9,6 +9,18 @@ interface IUser {
   password: String
 }
 
+export type Coor = [number, number];
+
+interface IGame {
+  selected?: Coor
+}
+
+interface IPremove {
+  from: Coor,
+  to: Coor,
+  direction: string
+}
+
 export const usersState = atom<IUser[]>({
   key: 'user',
   default: [
@@ -28,4 +40,14 @@ export const appState = atom<IApp>({
   default: {
     authenticated: false,
   },
+});
+
+export const gameState = atom<IGame>({
+  key: 'game',
+  default: {},
+});
+
+export const premovesState = atom<IPremove[]>({
+  key: 'premoves',
+  default: [],
 });

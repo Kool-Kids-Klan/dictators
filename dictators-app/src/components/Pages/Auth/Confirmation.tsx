@@ -13,7 +13,10 @@ const Confirmation = () => {
   });
 
   return (
-    <h1>Operation Successful</h1>
+    <div>
+      <h1>Operation Successful</h1>
+      <p>You will be redirected shortly</p>
+    </div>
   );
 };
 
