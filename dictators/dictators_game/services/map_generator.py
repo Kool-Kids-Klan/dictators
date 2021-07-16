@@ -41,7 +41,6 @@ def _check_capitals_distance(capitals: List[Tuple[int, int]],
     :param size: length of the edge of the map
     :return: True if capitals are positioned appropriately, False otherwise
     """
-    print(capitals)
     for i in range(len(capitals)):
         for j in range(i+1, len(capitals)):
             if _dist(capitals[i], capitals[j]) < size/2:
@@ -130,10 +129,6 @@ def generate_map(size: int,
         for i in range(len(quadrants)):
             q = quadrants[i]
             barracks[i] = random.sample(q, n_barracks // 4)
-            for (x, y) in barracks[i]:
-                M[x][y].terrain = "barracks"
-                M[x][y].army = BARRACKS_STARTING_ARMY
-            quadrants[i] = list(set(q)-set(barracks[i]))
 
         # Promote random barracks to capital for each player
         populated_quadrants = random.sample(range(4), n_players)
@@ -142,9 +137,15 @@ def generate_map(size: int,
             if i in populated_quadrants:
                 capitals.append(random.choice(barracks[i]))
         if _check_capitals_distance(capitals, size):
-            for x, y in capitals:
-                M[x][y].terrain = "capital"
-                M[x][y].army = CAPITAL_STARTING_ARMY
+            for i in range(len(quadrants)):
+                quadrants[i] = list(set(quadrants[i]) - set(barracks[i]))
+                for (x, y) in barracks[i]:
+                    if (x, y) in capitals:
+                        M[x][y].terrain = "capital"
+                        M[x][y].army = CAPITAL_STARTING_ARMY
+                    else:
+                        M[x][y].terrain = "barracks"
+                        M[x][y].army = BARRACKS_STARTING_ARMY
             break
 
     # Generate mountains
@@ -173,9 +174,9 @@ def draw_map(M: MAP_T) -> None:
             if tile.terrain == "mountain":
                 letter = "X"
             elif tile.terrain == "barracks":
-                letter = "."
+                letter = "B"
             elif tile.terrain == "capital":
-                letter = "O"
+                letter = "C"
             else:
                 letter = "."
             print(letter, end="")
@@ -183,6 +184,6 @@ def draw_map(M: MAP_T) -> None:
     print("===========================")
 
 
-sample_map = generate_map(16, 4, 4, 0)
+sample_map = generate_map(16, 4, 8, 100)
 draw_map(sample_map)
 
