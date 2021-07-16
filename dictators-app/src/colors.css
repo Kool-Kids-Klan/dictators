@@ -1,0 +1,17 @@
+:root {
+    --color-dark: #071a03;
+    --color-dark-green: #0b450a;
+    --color-yellow: #d6ae2f;
+    --color-green: #50630d;
+    --color-beige:	#d6d3ae;
+
+    --color-player-blue: #3660c9; 
+    --color-player-red: #c93636;
+    --color-player-green: #36c940;
+    --color-player-purple: #a236c9;
+
+
+    --color-tile-default: #808080;
+    --color-tile-selected: white;
+    --color-tile-text: white;
+}

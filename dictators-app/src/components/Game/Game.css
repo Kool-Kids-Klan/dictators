@@ -6,15 +6,16 @@ td {
     height: 50px;
     width: 50px;
 
-    background-color: grey;
+    background-color: var(--color-tile-default);
     background-size: cover;
 
     text-align: center;
-    color: white;
+    color: var(--color-tile-text);
+    font-weight: 500;
 }
 
 td.selected {
-    border: 1px solid yellow;
+    border: 1px solid var(--color-tile-selected);
 }
 
 td:hover {
@@ -22,15 +23,19 @@ td:hover {
 }
 
 .red {
-    background-color: red;
+    background-color: var(--color-player-red);
 }
 
 .blue {
-    background-color: blue;
+    background-color: var(--color-player-blue);
 }
 
 .green {
-    background-color: green;
+    background-color: var(--color-player-green);
+}
+
+.purple {
+    background-color: var(--color-player-purple);
 }
 
 .barracks {
