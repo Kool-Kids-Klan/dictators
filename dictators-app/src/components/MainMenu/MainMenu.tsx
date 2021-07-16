@@ -6,6 +6,9 @@ const MainMenu = () => (
     <LinkContainer to="/game">
       <button type="button">Play</button>
     </LinkContainer>
+    <LinkContainer to="/lobby">
+      <button type="button">Create Lobby</button>
+    </LinkContainer>
     <button type="button">Leaderboards</button>
   </div>
 );

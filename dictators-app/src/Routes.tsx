@@ -6,6 +6,7 @@ import Login from './components/Pages/Auth/Login';
 import Register from './components/Pages/Auth/Register';
 import Confirmation from './components/Pages/Auth/Confirmation';
 import Game from './components/Game/Game';
+import Lobby from './components/Lobby/Lobby';
 
 export default function Routes() {
   return (
@@ -24,6 +25,9 @@ export default function Routes() {
       </Route>
       <Route exact path="/game">
         <Game />
+      </Route>
+      <Route exact path="/lobby">
+        <Lobby />
       </Route>
       <Route>
         <NotFound />
