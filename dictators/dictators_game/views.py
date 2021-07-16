@@ -2,28 +2,11 @@ from django.shortcuts import render, redirect
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-import json
-
-from dictators.dictators_game import models
 from dictators.dictators_game.services import user_manager
 
 
 # TODO
 # pohrat sa kus s navratovymi hodnotami, return codes, error messages...
-
-
-class MainPage(APIView):
-
-    def get(self, request):
-        return render(request, 'index.html', {})
-
-    def post(self, request):
-        room_code = request.POST.get('room_code')
-        char_choice = request.POST.get('character_choice')
-
-        return redirect(
-            f'/play/{room_code}?&choice={char_choice}'
-        )
 
 
 class CreateUser(APIView):
@@ -65,7 +48,7 @@ class DeleteUser(APIView):
                                           params["password_salt"])
         if not result:
             return Response(status=401, data={
-                "error": "Invalid username or password."
+                "error": "Incorrect username or password."
             })
         return Response(status=204)
 
@@ -86,7 +69,7 @@ class AuthenticateUser(APIView):
                                                 params["password_salt"])
         if not result:
             return Response(status=401, data={
-                "error": "Invalid username or password."
+                "error": "Incorrect username or password."
             })
         return Response(status=200, data={
             "result": "User authenticated."
