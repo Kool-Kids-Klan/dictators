@@ -19,13 +19,11 @@ class Player:
 
 
 class Lobby:
-    def __init__(self, host: Player):
-        self.host: Player = host
-        self.players: List[Player] = [host]
+    def __init__(self):
+        self.players: List[Player] = []
         self.game_started: bool = False
         self.free_colors: List[str] = PLAYER_COLORS[:]
         random.shuffle(self.free_colors)
-        host.color = self.free_colors.pop()
 
     def _get_users(self) -> List[User]:
         return [player.user for player in self.players]
@@ -35,7 +33,7 @@ class Lobby:
         return [player for player in self.players if player.user == user][0]
 
     def add_player(self, user: User) -> bool:
-        # first check if user isn't already in lobby
+        # check if user isn't already in lobby and if MAX_PLAYERS isn't exceeded
         if user not in self._get_users() and len(self.players) < MAX_PLAYERS:
             self.players.append(Player(user, self.free_colors.pop()))
             return True
