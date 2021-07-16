@@ -9,14 +9,11 @@ interface ISquare {
   coords: Coor
 }
 
-const Square: React.FC<ISquare> = (props) => {
-  const {
-    army, owner, terrain, coords,
-  } = props;
-
+const Square: React.FC<ISquare> = ({
+  army, owner, terrain, coords,
+}) => {
   const [{ selected }, selectSquare] = useRecoilState(gameState);
   const [premoves] = useRecoilState(premovesState);
-  // TODO compare as whole??? not by parts
   const selectClass = (selected && coords[0] === selected[0] && coords[1] === selected[1]) ? 'selected' : '';
   // TODO overwrites terrain in CSS
   let directions = '';
