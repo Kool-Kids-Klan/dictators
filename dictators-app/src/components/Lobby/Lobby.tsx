@@ -1,12 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
+import { SetterOrUpdater } from 'recoil';
 import LobbyPlayer from './LobbyPlayer';
+import { connect, gameSocket, IGameBoard } from '../BusinessLogic/BusinessLogic';
+import { IGameTile } from '../Game/Game';
 
-const Lobby = () => {
+interface ILobby {
+  game: IGameTile[][]
+  setGame: SetterOrUpdater<IGameTile[][]>
+}
+
+const startGame = () => {
+  const data = {
+    event: 'START_GAME',
+    message: '',
+  };
+  gameSocket.send(JSON.stringify(data));
+};
+
+const Lobby: React.FC<ILobby> = (props) => {
+  const { game, setGame } = props;
   const [players, setPlayers] = useState([{ name: 'palko', color: 'cerveny' }, { name: 'jozko', color: 'modry' }]);
-  const playersBlocks = players.map((player) => (
+  connect({ setGame, players, setPlayers });
+  let playersBlocks = players.map((player) => (
     <LobbyPlayer name={player.name} color={player.color} />
   ));
+  useEffect(() => {
+    playersBlocks = players.map((player) => (
+      <LobbyPlayer name={player.name} color={player.color} />
+    ));
+  }, [players]);
 
   return (
     <div className="lobby">
@@ -14,7 +37,7 @@ const Lobby = () => {
       <hr />
       {playersBlocks}
       <LinkContainer to="/game">
-        <button type="button">Play</button>
+        <button type="button" onClick={startGame}>Play</button>
       </LinkContainer>
     </div>
   );

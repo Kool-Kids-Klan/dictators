@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Home from './components/Pages/Home';
 import NotFound from './components/Pages/NotFound';
@@ -7,8 +7,11 @@ import Register from './components/Pages/Auth/Register';
 import Confirmation from './components/Pages/Auth/Confirmation';
 import Game from './components/Game/Game';
 import Lobby from './components/Lobby/Lobby';
+import { IGameBoard } from './components/BusinessLogic/BusinessLogic';
 
 export default function Routes() {
+  const [game, setGame] = useState<IGameBoard[][]>([]);
+
   return (
     <Switch>
       <Route exact path="/">
@@ -24,10 +27,10 @@ export default function Routes() {
         <Confirmation />
       </Route>
       <Route exact path="/game">
-        <Game />
+        <Game game={game} setGame={setGame} />
       </Route>
       <Route exact path="/lobby">
-        <Lobby />
+        <Lobby game={game} setGame={setGame} />
       </Route>
       <Route>
         <NotFound />
