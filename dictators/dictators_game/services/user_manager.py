@@ -16,6 +16,18 @@ def create_user(username: str,
     return True
 
 
+def delete_user(username: str,
+                password_hash: str,
+                password_salt: str) -> bool:
+    user = models.User.objects.filter(username=username)
+    if (user and
+            user[0].password_hash == password_hash and
+            user[0].password_salt == password_salt):
+        user[0].delete()
+        return True
+    return False
+
+
 def authenticate_user(username: str,
                       password_hash: str,
                       password_salt: str) -> bool:

@@ -46,9 +46,28 @@ class CreateUser(APIView):
             return Response(status=409, data={
                 "error": "User with such username already exists."
             })
-        return Response(status=201, data={
-            "result": "User created."
-        })
+        return Response(status=204)
+
+
+class DeleteUser(APIView):
+
+    def delete(self, request):
+        params = request.data
+        if ("username" not in params or
+                "password_hash" not in params or
+                "password_salt" not in params):
+            return Response(status=400,
+                            data={
+                                "error": "Parameter(s) missing."
+                            })
+        result = user_manager.delete_user(params["username"],
+                                          params["password_hash"],
+                                          params["password_salt"])
+        if not result:
+            return Response(status=401, data={
+                "error": "Invalid username or password."
+            })
+        return Response(status=204)
 
 
 class AuthenticateUser(APIView):
