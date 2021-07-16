@@ -21,7 +21,7 @@ entity "User" as user {
 entity "Game" as game {
   *id : number <<generated>> 
   --
-  *createdAt : datetime
+  *startedAt : datetime
   *winner : User
   *replayData : blob
 }

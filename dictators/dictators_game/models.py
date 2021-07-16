@@ -1,17 +1,24 @@
-import json
-
 from django.db import models
+from django.contrib.auth import get_user_model
 
-# Create your models here.
+
+def get_sentinel_user():
+    return get_user_model().objects.get_or_create(username='deleted')[0]
 
 
-class GameBoard(models.Model):
-    game_board = models.JSONField()
+class User(models.Model):
+    username = models.CharField(max_length=20, unique=True)
+    passwordHash = models.TextField()
+    passwordSalt = models.TextField()
+    email_address = models.EmailField()
+    createdAt = models.DateTimeField()
+    gamesPlayed = models.IntegerField()
+    gamesWon = models.IntegerField()
 
-    def tick(self, addition: int):
-        print(f'tick is happening by {addition}')
 
-    def as_json(self):
-        return {
-            'game_board': self.game_board
-        }
+class Game(models.Model):
+    startedAt: models.DateTimeField()
+    endedAt: models.DateTimeField()
+    replayData: models.TextField()
+    participants: models.ManyToManyField(User)
+    winner: models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
