@@ -41,6 +41,7 @@ def _check_capitals_distance(capitals: List[Tuple[int, int]],
     :param size: length of the edge of the map
     :return: True if capitals are positioned appropriately, False otherwise
     """
+    print(capitals)
     for i in range(len(capitals)):
         for j in range(i+1, len(capitals)):
             if _dist(capitals[i], capitals[j]) < size/2:
@@ -123,19 +124,19 @@ def generate_map(size: int,
                 else:
                     quadrants[3].append((x, y))
 
-    # Generate barracks
     barracks = [[] for _ in range(len(quadrants))]
-    for i in range(len(quadrants)):
-        q = quadrants[i]
-        barracks[i] = random.sample(q, n_barracks // 4)
-        for (x, y) in barracks[i]:
-            M[x][y].terrain = "barracks"
-            M[x][y].army = BARRACKS_STARTING_ARMY
-        quadrants[i] = list(set(q)-set(barracks[i]))
-
-    # Promote random barracks to capital for each player
-    populated_quadrants = random.sample(range(4), n_players)
     while True:
+        # Generate barracks
+        for i in range(len(quadrants)):
+            q = quadrants[i]
+            barracks[i] = random.sample(q, n_barracks // 4)
+            for (x, y) in barracks[i]:
+                M[x][y].terrain = "barracks"
+                M[x][y].army = BARRACKS_STARTING_ARMY
+            quadrants[i] = list(set(q)-set(barracks[i]))
+
+        # Promote random barracks to capital for each player
+        populated_quadrants = random.sample(range(4), n_players)
         capitals = []
         for i in range(len(quadrants)):
             if i in populated_quadrants:
@@ -182,6 +183,6 @@ def draw_map(M: MAP_T) -> None:
     print("===========================")
 
 
-# sample_map = generate_map(20, 4, 20, 100)
-# draw_map(sample_map)
+sample_map = generate_map(16, 4, 4, 0)
+draw_map(sample_map)
 
