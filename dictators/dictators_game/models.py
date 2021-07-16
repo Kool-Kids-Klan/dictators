@@ -8,17 +8,17 @@ def get_sentinel_user():
 
 class User(models.Model):
     username = models.CharField(max_length=20, unique=True)
-    passwordHash = models.TextField()
-    passwordSalt = models.TextField()
+    password_hash = models.TextField()
+    password_salt = models.TextField()
     email_address = models.EmailField()
-    createdAt = models.DateTimeField()
-    gamesPlayed = models.IntegerField()
-    gamesWon = models.IntegerField()
+    created_at = models.DateTimeField()
+    games_played = models.IntegerField()
+    games_won = models.IntegerField()
 
 
 class Game(models.Model):
-    startedAt: models.DateTimeField()
-    endedAt: models.DateTimeField()
-    replayData: models.TextField()
+    started_at: models.DateTimeField()
+    ended_at: models.DateTimeField()
+    replay_data: models.TextField()
     participants: models.ManyToManyField(User)
     winner: models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
