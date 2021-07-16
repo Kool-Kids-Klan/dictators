@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Game.css';
 import { useRecoilState } from 'recoil';
 import Square from './Square';
+import Score from './Score';
 import { Coor, gameState, premovesState } from '../../store/atoms';
 
 interface IGameBoard {
@@ -139,12 +140,22 @@ const Game = () => {
   };
 
   return (
-    <div className="Game container-fluid">
-      <table>
+    <div className="game container-fluid">
+      <table className="game__table">
         <tbody>
           {board}
         </tbody>
       </table>
+      <Score scores={[{
+        player: 'Paly', land: '69', army: '420', color: 'blue',
+      }, {
+        player: 'Duri', land: '96', army: '50', color: 'red',
+      }, {
+        player: 'Dano', land: '9', army: '40', color: 'green',
+      }, {
+        player: 'Filo', land: '79', army: '42', color: 'purple',
+      }]}
+      />
     </div>
   );
 };

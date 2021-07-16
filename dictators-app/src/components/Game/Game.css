@@ -1,25 +1,53 @@
-table, td {
+td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.game {
+    position: relative;
+}
+
+table,
+.game__tile,
+.score__cell,
+.score__cell-head {
     border: 1px solid black;
 }
 
-td {
+.game__tile {
     height: 50px;
     width: 50px;
 
     background-color: var(--color-tile-default);
     background-size: cover;
 
-    text-align: center;
     color: var(--color-tile-text);
     font-weight: 700;
 }
 
-td.selected {
+.game__tile.selected {
     border: 2px solid var(--color-tile-selected);
 }
 
-td:hover {
+.game__tile:hover {
     opacity: 0.7;
+}
+
+.score {
+    font-size: 1.25rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.score__cell,
+.score__cell-head {
+    padding: 0.25rem 1rem;
+}
+
+.score__cell {
+    color: var(--color-tile-text);
+    font-weight: 700;
 }
 
 .red {

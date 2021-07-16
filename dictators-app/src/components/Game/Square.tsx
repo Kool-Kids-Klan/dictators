@@ -27,7 +27,7 @@ const Square: React.FC<ISquare> = (props) => {
   });
 
   return (
-    <td className={`${owner} ${terrain} ${selectClass} ${directions}`} onClick={() => selectSquare({ selected: coords })}>{army}</td>
+    <td className={`game__tile ${owner} ${terrain} ${selectClass} ${directions}`} onClick={() => selectSquare({ selected: coords })}>{army}</td>
   );
 };
 
