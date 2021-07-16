@@ -11,11 +11,11 @@ td {
 
     text-align: center;
     color: var(--color-tile-text);
-    font-weight: 500;
+    font-weight: 700;
 }
 
 td.selected {
-    border: 1px solid var(--color-tile-selected);
+    border: 2px solid var(--color-tile-selected);
 }
 
 td:hover {
