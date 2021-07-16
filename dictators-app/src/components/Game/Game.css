@@ -34,15 +34,15 @@ td:hover {
 }
 
 .barracks {
-    background-image: url("../../resources/images/swords.png");
+    background-image: url("../../resources/images/barrack.svg");
 }
 
 .mountains {
-    background-image: url("../../resources/images/snowed-mountains.png");
+    background-image: url("../../resources/images/mountain.svg");
 }
 
 .capital {
-    background-image: url("../../resources/images/crowns.png");
+    background-image: url("../../resources/images/castle.svg");
 }
 
 .right {
