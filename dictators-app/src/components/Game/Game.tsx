@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './Game.css';
-import { SetterOrUpdater, useRecoilState } from 'recoil';
+import { SetterOrUpdater, useRecoilState, useResetRecoilState } from 'recoil';
 import Tile from './Tile';
 import Score from './Score';
-import { Coor, gameState, premovesState } from '../../store/atoms';
+import {
+  Coor, gameState, premovesState, scoreState,
+} from '../../store/atoms';
 
 export interface IGameTile {
   army: number
@@ -20,6 +22,7 @@ const Game: React.FC<IGame> = (props) => {
   const { game, setGame } = props;
   const [premoves, setPremoves] = useRecoilState(premovesState);
   const [{ selected }, setSelected] = useRecoilState(gameState);
+  const [score, setScore] = useRecoilState(scoreState);
   // connect(setGame);
 
   // const game = [
@@ -100,16 +103,7 @@ const Game: React.FC<IGame> = (props) => {
           {board}
         </tbody>
       </table>
-      <Score scores={[{
-        player: 'Paly', land: '69', army: '420', color: 'blue',
-      }, {
-        player: 'Duri', land: '96', army: '50', color: 'red',
-      }, {
-        player: 'Dano', land: '9', army: '40', color: 'green',
-      }, {
-        player: 'Filo', land: '79', army: '42', color: 'purple',
-      }]}
-      />
+      <Score scores={score} />
     </div>
   );
 };

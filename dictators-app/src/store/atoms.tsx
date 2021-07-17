@@ -21,6 +21,13 @@ interface IPremove {
   direction: string
 }
 
+interface IScore {
+  player: string,
+  land: number,
+  army: number,
+  color: string
+}
+
 export const usersState = atom<IUser[]>({
   key: 'user',
   default: [
@@ -50,4 +57,17 @@ export const gameState = atom<IGame>({
 export const premovesState = atom<IPremove[]>({
   key: 'premoves',
   default: [],
+});
+
+export const scoreState = atom<IScore[]>({
+  key: 'scores',
+  default: [{
+    player: 'Paly', land: 69, army: 420, color: 'blue',
+  }, {
+    player: 'Duri', land: 96, army: 50, color: 'red',
+  }, {
+    player: 'Dano', land: 9, army: 40, color: 'green',
+  }, {
+    player: 'Filo', land: 79, army: 42, color: 'purple',
+  }],
 });
