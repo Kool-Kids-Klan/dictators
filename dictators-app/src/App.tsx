@@ -8,10 +8,12 @@ import Routes from './Routes';
 function App() {
   return (
     <RecoilRoot>
-      <div className="App container-fluid py-3">
-        <Navbar />
-        <Routes />
-      </div>
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <div className="App container-fluid py-3">
+          <Navbar />
+          <Routes />
+        </div>
+      </React.Suspense>
     </RecoilRoot>
   );
 }
