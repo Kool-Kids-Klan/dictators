@@ -13,7 +13,7 @@ MAX_PLAYERS = 4
 
 class Player:
     def __init__(self, user, color):
-        self.user: models.User = user
+        self.user: User = user
         self.color = color
         self.ready = False
 
@@ -28,7 +28,7 @@ class Lobby:
     def _get_users(self) -> List[User]:
         return [player.user for player in self.players]
 
-    def _get_player(self, user: User) -> Player:
+    def get_player(self, user: User) -> Player:
         # assuming that the given user is connected in the lobby
         return [player for player in self.players if player.user == user][0]
 
@@ -46,3 +46,6 @@ class Lobby:
 
     def all_ready(self):
         return all(player.ready for player in self.players)
+
+
+temp_lobby = Lobby()
