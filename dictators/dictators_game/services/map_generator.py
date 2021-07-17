@@ -3,9 +3,9 @@ from typing import List, Set, Tuple, NewType
 
 
 # TODO
+# size -> width+height
 # nahradit fixne pocty barracks/mountains multipliermi (ako v Generals) a vysledny pocet zaokruhlovat na najblizsi nasobok 4ky
-# "forest" tile? nema vision na susedne tiles, nevidiet co je v nom ak ho nekontrolujem (OP?)
-# na konci pomazat asserty
+# forest tile? nema vision na susedne tiles, nevidiet co je v nom ak ho nekontrolujem (OP?)
 
 
 PLAIN_STARTING_ARMY = 1
@@ -102,13 +102,19 @@ def generate_map(size: int,
     :param n_mountains: number of mountain tiles on the map
     :return: generated map
     """
-    assert 1 <= n_players <= 4  # 1-4 players TODO later change to 2-4
-    assert size % 2 == 0  # size must be even
-    assert n_barracks % 4 == 0  # same amount of barracks for each quadrant
-    assert n_mountains % 4 == 0  # # same amount of mountains for each quadrant
+
+    # Verify parameters
+    if n_players < 1 or n_players > 4:  # TODO later change to 2-4
+        raise ValueError("Only 1-4 players are allowed.")
+    if size % 2 != 0:
+        raise ValueError("Map size must be even.")
+    if n_barracks % 4 != 0:
+        raise ValueError("Number of barracks must be divisible by 4.")
+    if n_mountains % 4 != 0:
+        raise ValueError("Number of mountains must be divisible by 4.")
+
     M = MAP_T([[Tile(terrain="plain", army=PLAIN_STARTING_ARMY)
                 for _ in range(size)] for _ in range(size)])
-
     quadrants = [[] for _ in range(4)]  # [TL, TR, BL, BR]
     for y in range(size):
         for x in range(size):
@@ -153,7 +159,6 @@ def generate_map(size: int,
         mountains = []
         for q in quadrants:
             mountains += random.sample(q, n_mountains // 4)
-        assert len(mountains) == n_mountains
         if _check_capitals_accessibility(M, mountains):
             for (x, y) in mountains:
                 M[x][y].terrain = "mountain"
