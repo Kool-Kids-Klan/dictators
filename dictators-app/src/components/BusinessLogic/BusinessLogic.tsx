@@ -30,7 +30,7 @@ export const connect = (props: IConnect) => {
     // on websocket open, send the START event.
     gameSocket.send(JSON.stringify({
       event: 'JOIN_ROOM',
-      message: '',
+      message: 'revolko',
     }));
   };
 
@@ -71,12 +71,16 @@ export const connect = (props: IConnect) => {
         console.log('this is thick');
         break;
       case 'JOIN_USER':
+        console.log('this is new user', message);
         newPlayers.push(message);
         setPlayers(newPlayers);
         break;
       case 'LOAD_MAP':
         console.log('trying to load map');
         setGame(message);
+        break;
+      case 'USER_READY':
+        console.log('this user is ready', message);
         break;
       default:
         console.log('No event');
