@@ -108,8 +108,8 @@ def generate_map(size: int,
         raise ValueError("Only 1-4 players are allowed.")
     if size % 2 != 0:
         raise ValueError("Map size must be even.")
-    if n_barracks % 4 != 0:
-        raise ValueError("Number of barracks must be divisible by 4.")
+    if n_barracks == 0 or n_barracks % 4 != 0:
+        raise ValueError("Number of barracks must be non-zero and divisible by 4.")
     if n_mountains % 4 != 0:
         raise ValueError("Number of mountains must be divisible by 4.")
 
@@ -147,11 +147,11 @@ def generate_map(size: int,
                 quadrants[i] = list(set(quadrants[i]) - set(barracks[i]))
                 for (x, y) in barracks[i]:
                     if (x, y) in capitals:
-                        M[x][y].terrain = "capital"
-                        M[x][y].army = CAPITAL_STARTING_ARMY
+                        M[y][x].terrain = "capital"
+                        M[y][x].army = CAPITAL_STARTING_ARMY
                     else:
-                        M[x][y].terrain = "barracks"
-                        M[x][y].army = BARRACKS_STARTING_ARMY
+                        M[y][x].terrain = "barracks"
+                        M[y][x].army = BARRACKS_STARTING_ARMY
             break
 
     # Generate mountains
@@ -161,8 +161,8 @@ def generate_map(size: int,
             mountains += random.sample(q, n_mountains // 4)
         if _check_capitals_accessibility(M, mountains):
             for (x, y) in mountains:
-                M[x][y].terrain = "mountain"
-                M[x][y].army = 0
+                M[y][x].terrain = "mountain"
+                M[y][x].army = 0
             break
     return M
 
