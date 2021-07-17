@@ -86,6 +86,16 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             'event': 'USER_READY'
         })
 
+    async def user_not_ready(self, username):
+        user = await self.get_user_db(username)
+        player = self.lobby.get_player(user)
+        player.ready = False
+        await self.channel_layer.group_send(self.room_group_name, {
+            'type': 'send_message',
+            'message': player.as_json(),
+            'event': 'USER_NOT_READY'
+        })
+
     async def connect(self):
         print('User is trying to connect to room')
 
@@ -163,6 +173,9 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
         if event == 'GET_READY':
             await self.user_get_ready(message)
+
+        if event == 'NOT_READY':
+            await self.user_not_ready(message)
 
     async def send_message(self, res):
         """ Receive message from room group """

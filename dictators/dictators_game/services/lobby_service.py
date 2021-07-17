@@ -17,6 +17,13 @@ class Player:
         self.color = color
         self.ready = False
 
+    def as_json(self):
+        return {
+            'username': self.user.username,
+            'color': self.color,
+            'ready': self.ready
+        }
+
 
 class Lobby:
     def __init__(self):
