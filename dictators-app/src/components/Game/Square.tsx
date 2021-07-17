@@ -12,7 +12,7 @@ interface ISquare {
 const Square: React.FC<ISquare> = ({
   army, owner, terrain, selected, select, directions,
 }) => (
-  <td className={`${owner} ${terrain} ${selected} ${directions}`} onClick={select}>{army}</td>
+  <td className={`game__tile ${owner} ${terrain} ${selected} ${directions}`} onClick={select}>{army}</td>
 );
 
 export default Square;
