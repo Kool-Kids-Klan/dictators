@@ -42,6 +42,8 @@ const Login = () => {
     setIsLoading(true);
     if (await authenticate()) {
       setAppState({ authenticated: true, username });
+      const DAY7 = 1000 * 60 * 60 * 24 * 7;
+      document.cookie = `username=${username}; expires=${new Date(new Date().getTime() + DAY7)}`;
       history.push('/confirm');
     } else {
       alert('invalid');
