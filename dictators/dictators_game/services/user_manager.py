@@ -16,6 +16,11 @@ def create_user(username: str,
     return True
 
 
+def get_user(username: str) -> models.User:
+    print([user.username for user in models.User.objects.all()])
+    return models.User.objects.get(username=username)
+
+
 def delete_user(username: str,
                 password_hash: str,
                 password_salt: str) -> bool:
@@ -35,3 +40,6 @@ def authenticate_user(username: str,
     return (user and
             user[0].password_hash == password_hash and
             user[0].password_salt == password_salt)
+
+
+create_user("revolko", "sample_hash", "sample_salt", "sample@email.com")
