@@ -10,8 +10,9 @@ Execute following commands
 
 ```shell
 pipenv sync
-pipenv run python manage.py migrate
-pipenv run python manage.py runserver
+. bash_aliases
+migrate-django
+run-django-server
 ```
 
 By default, it will run local web server on localhost:8000. Choose room id (integer) and your character (X, O), open second browser window, choose same room id and different character.
