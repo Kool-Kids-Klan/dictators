@@ -3,7 +3,7 @@ the best game since the dawn of time
 
 Execute following commands
 
-Before first start of django backend comment last lines of user_manager.py and lobby_service.py in dictators_game.services
+Before first start of django backend comment last lines of user_manager.py in dictators_game.services
 
 ```shell
 pipenv sync
@@ -14,9 +14,6 @@ migrate-django
 Uncomment previously commented lines
 
 ```shell
-pipenv sync
-. bash_aliases
-migrate-django
 run-django-server
 ```
 
