@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-*k$twh*pwee+@_qg1^nq##$soxpbpu8#1g-fu$#3qijmzil))%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'channels',
     'dictators.dictators_game',
     'rest_framework',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'dictators.dictators_project.urls'
@@ -132,6 +134,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "dictators/static"),
 ]
+
+# Allow CORS
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Django channel settings
 CHANNEL_LAYERS = {
