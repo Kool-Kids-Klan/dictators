@@ -18,6 +18,14 @@ const startGame = () => {
   gameSocket.send(JSON.stringify(data));
 };
 
+const getReady = () => {
+  const data = {
+    event: 'GET_READY',
+    message: 'revolko',
+  };
+  gameSocket.send(JSON.stringify(data));
+};
+
 const Lobby: React.FC<ILobby> = (props) => {
   const { game, setGame } = props;
   const [players, setPlayers] = useState([{ name: 'palko', color: 'cerveny' }, { name: 'jozko', color: 'modry' }]);
@@ -39,6 +47,7 @@ const Lobby: React.FC<ILobby> = (props) => {
       <LinkContainer to="/game">
         <button type="button" onClick={startGame}>Play</button>
       </LinkContainer>
+      <button type="button" onClick={getReady}>Get ready</button>
     </div>
   );
 };
