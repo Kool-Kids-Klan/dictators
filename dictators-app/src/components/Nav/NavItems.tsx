@@ -8,16 +8,18 @@ import { appState } from '../../store/atoms';
 
 const NavItems = () => {
   const history = useHistory();
-  const [{ authenticated }, setAppState] = useRecoilState(appState);
+  const [{ authenticated, username }, setAppState] = useRecoilState(appState);
 
   function handleLogout() {
     setAppState({ authenticated: false });
+    document.cookie = 'username=';
     history.push('/confirm');
   }
 
   if (authenticated) {
     return (
       <Navbar.Collapse className="justify-content-end">
+        <span>{username}</span>
         <Nav activeKey={window.location.pathname}>
           <LinkContainer to="/logout">
             <Nav.Link onSelect={handleLogout}>Logout</Nav.Link>
