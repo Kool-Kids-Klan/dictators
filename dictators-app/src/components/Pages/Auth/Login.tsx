@@ -26,7 +26,7 @@ const Login = () => {
     setIsLoading(true);
     console.log(sha256(password));
     if (users.some((user) => user.email === email && user.password === password)) {
-      setAppState({ authenticated: true });
+      setAppState({ authenticated: true, username: email });
       history.push('/confirm');
     } else {
       alert('invalid');
