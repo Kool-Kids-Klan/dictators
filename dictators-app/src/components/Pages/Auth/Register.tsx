@@ -1,8 +1,6 @@
 import Form from 'react-bootstrap/Form';
 import React, { FormEvent, useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { useHistory } from 'react-router-dom';
-import { usersState } from '../../../store/atoms';
 import './Auth.css';
 import LoaderButton from '../../LoaderButton';
 
@@ -11,18 +9,41 @@ const Register = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [users, setUsers] = useRecoilState(usersState);
 
   function validateForm() {
-    return email.length > 0 && password.length > 0;
+    return email.length > 0 && username.length > 0 && password.length > 0;
   }
 
-  function handleSubmit(event: FormEvent) {
+  const registerUser = async () => {
+    const reqOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        password_hash: password,
+        password_salt: 'sample_salt',
+        email_address: email,
+      }),
+    };
+    const x = await fetch('localhost:8000/api/user/create', reqOptions);
+    console.log(x);
+    const response = await x.json();
+    console.log(response);
+    return response.code === 200;
+  };
+
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
     setIsLoading(true);
-    setUsers([...users, { email, password }]);
+    if (!await registerUser()) {
+      alert('Invalid');
+      return;
+    }
 
     setIsLoading(false);
     history.push('/confirm');
@@ -38,6 +59,15 @@ const Register = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+          />
+        </Form.Group>
+        <Form.Group controlId="username">
+          <Form.Label>Username</Form.Label>
+          <Form.Control
+            autoFocus
+            type="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </Form.Group>
         <Form.Group controlId="password">
