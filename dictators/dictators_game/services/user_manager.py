@@ -35,6 +35,3 @@ def authenticate_user(username: str,
     return (user and
             user[0].password_hash == password_hash and
             user[0].password_salt == password_salt)
-
-
-create_user("sample_user", "sample_hash", "sample_salt", "sample@email.com")

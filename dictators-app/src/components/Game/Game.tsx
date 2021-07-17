@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Game.css';
 import { useRecoilState } from 'recoil';
 import Square from './Square';
+import Score from './Score';
 import { Coor, gameState, premovesState } from '../../store/atoms';
 
 interface IGameBoard {
@@ -88,24 +89,33 @@ const Game = () => {
   // ];
 
   console.log('this is game', game);
-  let y = 0;
-  const board = game.map((row) => {
-    let x = 0;
-    const squares = row.map((square) => {
-      x += 1;
+  const board = game.map((row, y) => {
+    const squares = row.map((square, x) => {
+      const coords: Coor = [y, x];
+      const selectClass = (selected && coords[0] === selected[0] && coords[1] === selected[1]) ? 'selected' : '';
+      const selectSquare = () => setSelected({ selected: coords });
+      // TODO overwrites terrain in CSS
+      let directions = '';
+      premoves.forEach((premove) => {
+        if (premove.from[0] === coords[0] && premove.from[1] === coords[1]
+          && !directions.includes(premove.direction)) {
+          directions += `${premove.direction} `;
+        }
+      });
       return (
         <Square
-          key={[y, x - 1].toString()}
-          coords={[y, x - 1]}
+          key={coords.toString()}
           army={square.army}
           owner={square.owner}
           terrain={square.terrain}
+          selected={selectClass}
+          select={selectSquare}
+          directions={directions}
         />
       );
     });
-    y += 1;
     return (
-      <tr key={y}>
+      <tr key={y.toString()}>
         {squares}
       </tr>
     );
@@ -139,12 +149,22 @@ const Game = () => {
   };
 
   return (
-    <div className="Game container-fluid">
-      <table>
+    <div className="game container-fluid">
+      <table className="game__table">
         <tbody>
           {board}
         </tbody>
       </table>
+      <Score scores={[{
+        player: 'Paly', land: '69', army: '420', color: 'blue',
+      }, {
+        player: 'Duri', land: '96', army: '50', color: 'red',
+      }, {
+        player: 'Dano', land: '9', army: '40', color: 'green',
+      }, {
+        player: 'Filo', land: '79', army: '42', color: 'purple',
+      }]}
+      />
     </div>
   );
 };

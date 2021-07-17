@@ -14,4 +14,6 @@
     --color-tile-default: #808080;
     --color-tile-selected: white;
     --color-tile-text: white;
+
+    --color-primary: var(--color-dark-green);
 }
