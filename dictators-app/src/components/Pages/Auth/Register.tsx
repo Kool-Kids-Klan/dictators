@@ -23,6 +23,7 @@ const Register = () => {
 
     setIsLoading(true);
     setUsers([...users, { email, password }]);
+
     setIsLoading(false);
     history.push('/confirm');
   }
