@@ -3,6 +3,7 @@ import React, { FormEvent, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import './Auth.css';
 import LoaderButton from '../../LoaderButton';
+import sha256 from '../../../utils/crypting';
 
 const Register = () => {
   const history = useHistory();
@@ -21,19 +22,17 @@ const Register = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Origin: 'http://localhost:3000',
       },
       body: JSON.stringify({
         username,
-        password_hash: password,
+        password_hash: sha256(password),
         password_salt: 'sample_salt',
         email_address: email,
       }),
     };
-    const x = await fetch('localhost:8000/api/user/create', reqOptions);
-    console.log(x);
-    const response = await x.json();
-    console.log(response);
-    return response.code === 200;
+    const x = await fetch('http://localhost:8000/api/user/create', reqOptions);
+    return x.status === 204;
   };
 
   async function handleSubmit(event: FormEvent) {

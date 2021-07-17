@@ -1,11 +1,11 @@
 import React, { FormEvent, useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import sha256 from 'crypto-js/sha256';
 import { useHistory } from 'react-router-dom';
 import './Auth.css';
 import { useRecoilState } from 'recoil';
 import { appState } from '../../../store/atoms';
 import LoaderButton from '../../LoaderButton';
+import sha256 from '../../../utils/crypting';
 
 const Login = () => {
   const history = useHistory();
@@ -24,25 +24,22 @@ const Login = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Origin: 'http://localhost:3000',
       },
       body: JSON.stringify({
-        username: 'revolko',
-        password_hash: 'sample_hash',
+        username,
+        password_hash: sha256(password),
         password_salt: 'sample_salt',
       }),
     };
-    const x = await fetch('localhost:8000/api/user/authenticate', reqOptions);
-    console.log(x);
-    const response = await x.json();
-    console.log(response);
-    return response.code === 200;
+    const x = await fetch('http://localhost:8000/api/user/authenticate', reqOptions);
+    return x.status === 200;
   };
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
     setIsLoading(true);
-    console.log(sha256(password));
     if (await authenticate()) {
       setAppState({ authenticated: true, username });
       history.push('/confirm');
