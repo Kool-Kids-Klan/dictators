@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import './Auth.css';
 import LoaderButton from '../../LoaderButton';
 import sha256 from '../../../utils/crypting';
+import { CREATE_USER_URL, reqOptions } from '../../../utils/endpoints';
 
 const Register = () => {
   const history = useHistory();
@@ -18,20 +19,13 @@ const Register = () => {
   }
 
   const registerUser = async () => {
-    const reqOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: 'http://localhost:3000',
-      },
-      body: JSON.stringify({
-        username,
-        password_hash: sha256(password),
-        password_salt: 'sample_salt',
-        email_address: email,
-      }),
+    const body = {
+      username,
+      password_hash: sha256(password),
+      password_salt: 'sample_salt',
+      email_address: email,
     };
-    return fetch('http://localhost:8000/api/user/create', reqOptions)
+    return fetch(CREATE_USER_URL, reqOptions(body))
       .then((res) => res)
       .catch((error) => alert(error));
   };

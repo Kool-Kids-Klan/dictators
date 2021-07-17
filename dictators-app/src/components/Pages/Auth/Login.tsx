@@ -6,6 +6,7 @@ import { useRecoilState } from 'recoil';
 import { appState } from '../../../store/atoms';
 import LoaderButton from '../../LoaderButton';
 import sha256 from '../../../utils/crypting';
+import { AUTH_USER_URL, reqOptions } from '../../../utils/endpoints';
 
 const Login = () => {
   const history = useHistory();
@@ -20,19 +21,12 @@ const Login = () => {
   }
 
   const authenticate = async () => {
-    const reqOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: 'http://localhost:3000',
-      },
-      body: JSON.stringify({
-        username,
-        password_hash: sha256(password),
-        password_salt: 'sample_salt',
-      }),
+    const body = {
+      username,
+      password_hash: sha256(password),
+      password_salt: 'sample_salt',
     };
-    return fetch('http://localhost:8000/api/user/authenticate', reqOptions)
+    return fetch(AUTH_USER_URL, reqOptions(body))
       .then((res) => res)
       .catch((error) => alert(error));
   };
