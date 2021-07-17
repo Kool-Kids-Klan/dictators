@@ -1,32 +1,47 @@
 import React, { FormEvent, useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import sha256 from 'crypto-js/sha256';
 import { useHistory } from 'react-router-dom';
 import './Auth.css';
 import { useRecoilState } from 'recoil';
-import { appState, usersState } from '../../../store/atoms';
+import { appState } from '../../../store/atoms';
 import LoaderButton from '../../LoaderButton';
+import sha256 from '../../../utils/crypting';
 
 const Login = () => {
   const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [, setAppState] = useRecoilState(appState);
-  const [users] = useRecoilState(usersState);
 
   function validateForm() {
-    return email.length > 0 && password.length > 0;
+    return username.length > 0 && password.length > 0;
   }
 
-  function handleSubmit(event: FormEvent) {
+  const authenticate = async () => {
+    const reqOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Origin: 'http://localhost:3000',
+      },
+      body: JSON.stringify({
+        username,
+        password_hash: sha256(password),
+        password_salt: 'sample_salt',
+      }),
+    };
+    const x = await fetch('http://localhost:8000/api/user/authenticate', reqOptions);
+    return x.status === 200;
+  };
+
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
     setIsLoading(true);
-    console.log(sha256(password));
-    if (users.some((user) => user.email === email && user.password === password)) {
-      setAppState({ authenticated: true });
+    if (await authenticate()) {
+      setAppState({ authenticated: true, username });
       history.push('/confirm');
     } else {
       alert('invalid');
@@ -37,13 +52,13 @@ const Login = () => {
   return (
     <div className="Login">
       <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="email">
-          <Form.Label>Email</Form.Label>
+        <Form.Group controlId="username">
+          <Form.Label>Username</Form.Label>
           <Form.Control
             autoFocus
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </Form.Group>
         <Form.Group controlId="password">

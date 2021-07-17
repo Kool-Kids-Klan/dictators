@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './Game.css';
 import { SetterOrUpdater, useRecoilState } from 'recoil';
-import Square from './Square';
+import Tile from './Tile';
 import Score from './Score';
-import { Coor, gameState, premovesState } from '../../store/atoms';
+import { Coor, premovesState } from '../../store/atoms';
 
 export interface IGameTile {
   army: number
@@ -17,9 +17,10 @@ interface IGame {
 }
 
 const Game: React.FC<IGame> = (props) => {
-  const { game, setGame } = props;
+  const { game } = props;
   const [premoves, setPremoves] = useRecoilState(premovesState);
-  const [{ selected }, setSelected] = useRecoilState(gameState);
+  // TODO delete default value / set to base Coor from backend
+  const [selected, setSelected]: [Coor, SetterOrUpdater<Coor>] = useState([-1, -1]);
   // connect(setGame);
 
   // const game = [
@@ -37,8 +38,8 @@ const Game: React.FC<IGame> = (props) => {
   const board = game.map((row, y) => {
     const squares = row.map((square, x) => {
       const coords: Coor = [y, x];
-      const selectClass = (selected && coords[0] === selected[0] && coords[1] === selected[1]) ? 'selected' : '';
-      const selectSquare = () => setSelected({ selected: coords });
+      const selectClass = (coords[0] === selected[0] && coords[1] === selected[1]) ? 'selected' : '';
+      const selectSquare = () => setSelected(coords);
       // TODO overwrites terrain in CSS
       let directions = '';
       premoves.forEach((premove) => {
@@ -48,7 +49,7 @@ const Game: React.FC<IGame> = (props) => {
         }
       });
       return (
-        <Square
+        <Tile
           key={coords.toString()}
           army={square.army}
           owner={square.owner}
@@ -90,7 +91,7 @@ const Game: React.FC<IGame> = (props) => {
       return;
     }
     setPremoves([...premoves, { from: selected, to: x, direction }]);
-    setSelected({ selected: x });
+    setSelected(x);
   };
 
   return (
