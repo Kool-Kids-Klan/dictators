@@ -55,7 +55,7 @@ class DeleteUser(APIView):
 
 class AuthenticateUser(APIView):
 
-    def get(self, request):
+    def post(self, request):
         params = request.data
         if ("username" not in params or
                 "password_hash" not in params or
