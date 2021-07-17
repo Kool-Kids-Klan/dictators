@@ -32,21 +32,27 @@ const Login = () => {
         password_salt: 'sample_salt',
       }),
     };
-    const x = await fetch('http://localhost:8000/api/user/authenticate', reqOptions);
-    return x.status === 200;
+    return fetch('http://localhost:8000/api/user/authenticate', reqOptions)
+      .then((res) => res)
+      .catch((error) => alert(error));
   };
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
     setIsLoading(true);
-    if (await authenticate()) {
+    try {
+      const res = await authenticate();
+      if (!res) return;
+      if (res.status !== 200) {
+        alert((await res.json()).error);
+        return;
+      }
       setAppState({ authenticated: true, username });
       const DAY7 = 1000 * 60 * 60 * 24 * 7;
       document.cookie = `username=${username}; expires=${new Date(new Date().getTime() + DAY7)}`;
       history.push('/confirm');
-    } else {
-      alert('invalid');
+    } finally {
       setIsLoading(false);
     }
   }
