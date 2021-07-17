@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Game.css';
 import { SetterOrUpdater, useRecoilState } from 'recoil';
-import Square from './Square';
+import Tile from './Tile';
 import Score from './Score';
 import { Coor, gameState, premovesState } from '../../store/atoms';
 
@@ -48,7 +48,7 @@ const Game: React.FC<IGame> = (props) => {
         }
       });
       return (
-        <Square
+        <Tile
           key={coords.toString()}
           army={square.army}
           owner={square.owner}
