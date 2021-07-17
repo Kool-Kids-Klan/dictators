@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface IScoreProps {
-  scores: { player: string, land: string, army: string, color: string }[]
+  scores: { player: string, land: number, army: number, color: string }[]
 }
 
 const Score = ({ scores }: IScoreProps) => {
