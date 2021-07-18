@@ -1,8 +1,8 @@
 import { selector } from 'recoil';
+import { makeId } from '../utils/utils';
 
-const roomCode = 1;
 const webSocketUrl = 'localhost:8000';
-const connectionString = `ws://${webSocketUrl}/ws/play/${roomCode}/`;
+const connectionString = `ws://${webSocketUrl}/ws/play/`;
 
 let socket: WebSocket | undefined;
 
@@ -10,7 +10,7 @@ export const currentGameSocket = selector({
   key: 'gameSocket',
   get: () => {
     if (!socket) {
-      socket = new WebSocket(connectionString);
+      socket = new WebSocket(`${connectionString}${makeId(5)}/`);
     }
     return socket;
   },

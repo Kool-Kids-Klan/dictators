@@ -7,7 +7,7 @@ import { currentGameSocket } from '../../store/selectors';
 import { appState, lobbyState } from '../../store/atoms';
 
 const Lobby = () => {
-  const { players } = useRecoilValue(lobbyState);
+  const { id, players } = useRecoilValue(lobbyState);
   const [app] = useRecoilState(appState);
   const [ready, setReady] = useState(false);
   connect();
@@ -31,6 +31,10 @@ const Lobby = () => {
   return (
     <div className="lobby">
       <h1>This is game lobby</h1>
+      <h2>
+        Lobby code:&nbsp;
+        {id}
+      </h2>
       <hr />
       {playersBlocks}
       <ToggleButton

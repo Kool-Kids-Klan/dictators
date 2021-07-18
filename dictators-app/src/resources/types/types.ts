@@ -10,6 +10,7 @@ export interface IPlayer {
 }
 
 export interface ILobby {
+  id: string
   players: IPlayer[]
 }
 

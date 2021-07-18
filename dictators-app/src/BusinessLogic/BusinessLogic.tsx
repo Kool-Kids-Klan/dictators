@@ -7,15 +7,16 @@ import {
 } from '../store/atoms';
 import { ILobby, IPlayer } from '../resources/types/types';
 
-const changeUser = (players: ILobby, setPlayers: SetterOrUpdater<ILobby>,
+const changeUser = (lobby: ILobby, setLobby: SetterOrUpdater<ILobby>,
   changedPlayer: IPlayer) => {
-  const index = players.players.findIndex((player) => player.name === changedPlayer.name);
+  const index = lobby.players.findIndex((player) => player.name === changedPlayer.name);
   if (index === -1) {
     alert('did not find user that want to change');
   } else {
-    setPlayers({
+    setLobby({
+      id: lobby.id,
       players: [
-        ...players.players.slice(0, index), changedPlayer, ...players.players.slice(index + 1),
+        ...lobby.players.slice(0, index), changedPlayer, ...lobby.players.slice(index + 1),
       ],
     });
   }
@@ -25,9 +26,9 @@ export const connect = () => {
   const [, setGame] = useRecoilState(gameState);
   const gameSocket = useRecoilValue(currentGameSocket);
   const { username } = useRecoilValue(appState);
-  const [players, setPlayers] = useRecoilState(lobbyState);
-  const [scoreBoard, setScoreBoard] = useRecoilState(scoreState);
+  const [, setScoreBoard] = useRecoilState(scoreState);
   const history = useHistory();
+  const [lobby, setLobby] = useRecoilState(lobbyState);
   gameSocket.onopen = function open() {
     console.log('WebSockets connection created.');
     // on websocket open, send the START event.
@@ -77,7 +78,7 @@ export const connect = () => {
         break;
       case 'JOIN_USER':
         console.log('this are connected users', message);
-        setPlayers({ players: message.players });
+        setLobby({ id: message.id, players: message.players });
         break;
       case 'LOAD_MAP':
         console.log('trying to load map');
@@ -85,11 +86,11 @@ export const connect = () => {
         break;
       case 'USER_READY':
         console.log('this user is ready', message);
-        changeUser(players, setPlayers, message);
+        changeUser(lobby, setLobby, message);
         break;
       case 'USER_NOT_READY':
         console.log('this user is not ready', message);
-        changeUser(players, setPlayers, message);
+        changeUser(lobby, setLobby, message);
         break;
       default:
         console.log('No event');
