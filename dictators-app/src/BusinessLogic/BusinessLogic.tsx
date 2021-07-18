@@ -73,7 +73,7 @@ export const connect = () => {
         break;
       case 'JOIN_USER':
         console.log('this are connected users', message);
-        setPlayers({ players: message });
+        setPlayers({ players: message.players });
         break;
       case 'LOAD_MAP':
         console.log('trying to load map');
