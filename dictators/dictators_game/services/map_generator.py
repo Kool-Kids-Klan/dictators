@@ -8,7 +8,7 @@ from typing import List, Set, Tuple, NewType
 # forest tile? nema vision na susedne tiles, nevidiet co je v nom ak ho nekontrolujem (OP?)
 
 
-PLAIN_STARTING_ARMY = 1
+PLAIN_STARTING_ARMY = 0
 BARRACKS_STARTING_ARMY = 50
 CAPITAL_STARTING_ARMY = 1
 

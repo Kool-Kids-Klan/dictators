@@ -48,12 +48,13 @@ class Game:
                 if player in tile.discoveredBy or not player.alive:
                     player_map[y][x] = {
                         "terrain": tile.terrain,
-                        "color": tile.owner.color if tile.owner else "gray",
+                        "color": tile.owner.color if tile.owner else "white",
                         "army": tile.army
                     }
                 elif tile.terrain in ["mountain", "barracks", "capital"]:
                     player_map[y][x] = {
-                        "terrain": "obstacle"
+                        "terrain": "obstacle",
+                        "color": "gray"
                     }
                 # else tile remains an empty dict
         return player_map
