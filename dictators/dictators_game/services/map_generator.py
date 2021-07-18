@@ -17,7 +17,7 @@ class Tile:
     def __init__(self, terrain, army):
         self.terrain = terrain
         self.army = army
-        self.owner = ""
+        self.owner = None
         self.discoveredBy = []
 
 

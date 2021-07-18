@@ -21,14 +21,14 @@ export const gameState = atom<IGame>({
   key: 'game',
   default: {
     game: [
-      [{ army: 1, owner: 'blue', terrain: 'barracks' }, { army: 120, owner: 'blue' },
-        {}, { army: 10, owner: 'red' }],
-      [{ army: 1, owner: 'blue' }, { army: 120, owner: 'blue', terrain: 'capital' },
-        { army: 1, owner: 'red', terrain: 'mountains' }, { army: 10, owner: 'red' }],
-      [{ army: 1, owner: 'blue' }, {}, { army: 1, owner: 'red' },
-        { army: 10, owner: 'green' }],
-      [{ terrain: 'capital' }, { army: 120, owner: 'blue' },
-        { army: 1, owner: 'red', terrain: 'barracks' }, { army: 10, owner: 'red' }],
+      [{ army: 1, color: 'blue', terrain: 'barracks' }, { army: 120, color: 'blue' },
+        {}, { army: 10, color: 'red' }],
+      [{ army: 1, color: 'blue' }, { army: 120, color: 'blue', terrain: 'capital' },
+        { army: 1, color: 'red', terrain: 'mountains' }, { army: 10, color: 'red' }],
+      [{ army: 1, color: 'blue' }, {}, { army: 1, color: 'red' },
+        { army: 10, color: 'green' }],
+      [{ terrain: 'capital' }, { army: 120, color: 'blue' },
+        { army: 1, color: 'red', terrain: 'barracks' }, { army: 10, color: 'red' }],
     ],
   },
 });
@@ -41,12 +41,12 @@ export const premovesState = atom<IPremove[]>({
 export const scoreState = atom<IScore[]>({
   key: 'scores',
   default: [{
-    player: 'Paly', land: 69, army: 420, color: 'blue',
+    username: 'Paly', land: 69, army: 420, color: 'blue',
   }, {
-    player: 'Duri', land: 96, army: 50, color: 'red',
+    username: 'Duri', land: 96, army: 50, color: 'red',
   }, {
-    player: 'Dano', land: 9, army: 40, color: 'green',
+    username: 'Dano', land: 9, army: 40, color: 'green',
   }, {
-    player: 'Filo', land: 79, army: 42, color: 'purple',
+    username: 'Filo', land: 79, army: 42, color: 'purple',
   }],
 });

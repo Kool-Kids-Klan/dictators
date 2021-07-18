@@ -15,7 +15,7 @@ export interface ILobby {
 
 export interface IGameTile {
   army?: number
-  owner?: string
+  color?: string
   terrain?: string
 }
 
@@ -31,7 +31,7 @@ export interface IPremove {
 }
 
 export interface IScore {
-  player: string, land: number, army: number, color: string
+  username: string, land: number, army: number, color: string
 }
 
 export interface IScoreProps {

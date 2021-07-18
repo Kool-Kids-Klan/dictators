@@ -4,7 +4,7 @@ import { IScoreProps } from '../../resources/types/types';
 const Score = ({ scores }: IScoreProps) => {
   const playerRows = scores.map((score) => (
     <tr key={score.color} className={score.color}>
-      <td className="score__cell">{score.player}</td>
+      <td className="score__cell">{score.username}</td>
       <td className="score__cell">{score.land}</td>
       <td className="score__cell">{score.army}</td>
     </tr>

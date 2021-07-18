@@ -12,9 +12,7 @@ const Game = () => {
   const [scores, setScores] = useRecoilState(scoreState);
   // TODO delete default value / set to base Coor from backend
   const [selected, setSelected]: [Coor, SetterOrUpdater<Coor>] = useState([-1, -1]);
-  // connect(setGame);
 
-  console.log('this is game', game);
   const board = game.map((row, y) => {
     const squares = row.map((square, x) => {
       const coords: Coor = [y, x];
@@ -31,7 +29,7 @@ const Game = () => {
         <Tile
           key={coords.toString()}
           army={square.army}
-          owner={square.owner}
+          owner={square.color}
           terrain={square.terrain}
           selected={selectClass}
           select={selectSquare}

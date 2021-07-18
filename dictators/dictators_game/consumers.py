@@ -5,9 +5,9 @@ from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 
-from dictators.dictators_game.services.map_generator import generate_map
 from dictators.dictators_game.services.user_manager import get_user
 from dictators.dictators_game.services.lobby_service import temp_lobby
+from dictators.dictators_game.services.game_logic import Game
 
 
 class DictatorsConsumer(AsyncJsonWebsocketConsumer):
@@ -17,14 +17,24 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         self.room_group_name = ''
         self.task = None
         self.lobby = temp_lobby
+        self.game = None
+        self.game_map = None
 
-    async def tick(self, game_map):
+    async def tick(self):
         while True:
-            await self.channel_layer.group_send(self.room_group_name, {
-                'type': 'send_message',
-                'message': '',
-                'event': 'TICK'
-            })
+            game_tick = await sync_to_async(self.game.tick)()
+
+            for player in self.lobby.get_all_players():
+                player_name = player.user.username
+                await self.channel_layer.group_send(player_name, {
+                    'type': 'send_message',
+                    'message': {
+                        'map': game_tick['maps'][player_name],
+                        'scoreboard': game_tick['scoreboard']
+                    },
+                    'event': 'TICK'
+                })
+
             print('tick is happening')
             await asyncio.sleep(5)
 
@@ -33,57 +43,48 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         if self.task:
             self.task.cancel()
 
-    @staticmethod
-    def map_to_json(game_map):
-        map_dict = []
-        for row in game_map:
-            row_dict = []
-            for tile in row:
-                tile_dict = {
-                    'army': tile.army,
-                    'owner': tile.owner,
-                    'terrain': tile.terrain
-                }
-                row_dict.append(tile_dict)
-            map_dict.append(row_dict)
-        return map_dict
-
     async def start_game(self):
-        game_map = await sync_to_async(generate_map)(16, 4, 8, 0)
-        game_map_json = self.map_to_json(game_map)
+        self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 16, 8, 0)
+
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
-            'message': game_map_json,
-            'event': 'LOAD_MAP'
+            'message': '',
+            'event': 'START'
         })
-        # await self.tick(game_map)
+
+        loop = asyncio.get_event_loop()
+        self.task = loop.create_task(self.tick())
 
     @database_sync_to_async
     def get_user_db(self, username):
         return get_user(username)
 
     async def add_user_to_lobby(self, username):
-        # my_user = {'name': 'revolko', 'color': 'red'}
         user = await self.get_user_db(username)
         self.lobby.add_player(user)
-        player_dict = [{'name': player.user.username, 'color': player.color, 'ready': player.ready}
-                       for player in self.lobby.get_all_players()]
+        player_dict = [player.as_json() for player in self.lobby.get_all_players()]
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
-            'message': player_dict,
+            'message': {'players': player_dict, 'id': self.room_name},
             'event': 'JOIN_USER'
         })
+
+        await self.channel_layer.group_add(
+            user.username,
+            self.channel_name
+        )
 
     async def user_get_ready(self, username):
         user = await self.get_user_db(username)
         player = self.lobby.get_player(user)
         player.ready = True
-        # player_dict = {'name': player.user.username, 'color': player.color, 'ready': player.ready}
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
             'message': player.as_json(),
             'event': 'USER_READY'
         })
+        if self.lobby.all_ready():
+            await self.start_game()
 
     async def user_not_ready(self, username):
         user = await self.get_user_db(username)
@@ -97,7 +98,6 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self):
         print('User is trying to connect to room')
-        # print('this is scope', self.scope)
 
         self.room_name = self.scope['url_route']['kwargs']['room_code']
         self.room_group_name = f'room_{self.room_name}'
