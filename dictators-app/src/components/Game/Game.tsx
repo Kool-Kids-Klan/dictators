@@ -29,7 +29,7 @@ const Game = () => {
         <Tile
           key={coords.toString()}
           army={square.army}
-          owner={square.owner}
+          owner={square.color}
           terrain={square.terrain}
           selected={selectClass}
           select={selectSquare}
