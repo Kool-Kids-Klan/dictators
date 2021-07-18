@@ -1,29 +1,13 @@
 import React from 'react';
-import { SetterOrUpdater, useRecoilValue } from 'recoil';
-import { currentGameSocket } from '../../store/selectors';
-import { appState } from '../../store/atoms';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { currentGameSocket } from '../store/selectors';
+import { appState, gameState, lobbyState } from '../store/atoms';
 
-export interface IGameBoard {
-  army: number
-  owner: string
-  terrain: string
-}
-
-export interface IPlayer {
-  name: string
-  color: string
-}
-
-interface IConnect {
-  setGame: SetterOrUpdater<IGameBoard[][]>,
-  players: IPlayer[],
-  setPlayers: SetterOrUpdater<IPlayer[]>,
-}
-
-export const connect = (props: IConnect) => {
-  const { setGame, players, setPlayers } = props;
+export const connect = () => {
+  const [, setGame] = useRecoilState(gameState);
   const gameSocket = useRecoilValue(currentGameSocket);
   const { username } = useRecoilValue(appState);
+  const [, setPlayers] = useRecoilState(lobbyState);
   gameSocket.onopen = function open() {
     console.log('WebSockets connection created.');
     // on websocket open, send the START event.
@@ -36,7 +20,7 @@ export const connect = (props: IConnect) => {
   gameSocket.onclose = function close(e) {
     console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
     setTimeout(() => {
-      connect(props);
+      connect();
     }, 1000);
   };
 
@@ -48,7 +32,6 @@ export const connect = (props: IConnect) => {
     data = data.payload;
     const { message } = data;
     const { event } = data;
-    const newPlayers = [...players];
     switch (event) {
       case 'START':
         break;
@@ -63,20 +46,19 @@ export const connect = (props: IConnect) => {
         //   }
         //   break;
       case 'GAME_BOARD':
-        setGame(message);
+        setGame({ game: message });
         console.log('game board', message);
         break;
       case 'TICK':
         console.log('this is thick');
         break;
       case 'JOIN_USER':
-        console.log('this is new user', message);
-        newPlayers.push(message);
-        setPlayers(newPlayers);
+        console.log('this are connected users', message);
+        setPlayers({ players: message });
         break;
       case 'LOAD_MAP':
         console.log('trying to load map');
-        setGame(message);
+        setGame({ game: message });
         break;
       case 'USER_READY':
         console.log('this user is ready', message);
@@ -90,3 +72,5 @@ export const connect = (props: IConnect) => {
   //   gameSocket.onopen();
   // }
 };
+
+export default connect;
