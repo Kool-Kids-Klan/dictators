@@ -13,6 +13,7 @@ export const appState = atom<IApp>({
 export const lobbyState = atom<ILobby>({
   key: 'lobby',
   default: {
+    id: 'Loading...',
     players: [],
   },
 });
