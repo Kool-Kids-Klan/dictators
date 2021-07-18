@@ -14,9 +14,9 @@ export interface ILobby {
 }
 
 export interface IGameTile {
-  army: number
-  color: string
-  terrain: string
+  army?: number
+  owner?: string
+  terrain?: string
 }
 
 export interface IGame {
@@ -27,21 +27,24 @@ export type Coor = [number, number];
 
 export interface IPremove {
   from: Coor,
-  to: Coor,
   direction: string
 }
 
-export interface IScoreProps {
-  scores: { player: string, land: string, army: string, color: string }[]
+export interface IScore {
+  player: string, land: number, army: number, color: string
 }
 
-export interface ISquare {
+export interface IScoreProps {
+  scores: IScore[]
+}
+
+export interface ITile {
   army?: number,
   owner?: string,
   terrain?: string,
   selected?: string,
   select: () => void,
-  directions?: string,
+  directions: Set<string>,
 }
 
 export interface ILobbyPlayerProps {
