@@ -3,8 +3,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 const MainMenu = () => (
   <div className="menu">
-    <LinkContainer to="/game">
-      <button type="button">Play</button>
+    <LinkContainer to="/lobby">
+      <button type="button">Join Lobby</button>
     </LinkContainer>
     <LinkContainer to="/lobby">
       <button type="button">Create Lobby</button>
