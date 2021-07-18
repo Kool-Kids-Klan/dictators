@@ -1,16 +1,17 @@
 import React from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import LobbyPlayer from './LobbyPlayer';
 import { connect } from '../../BusinessLogic/BusinessLogic';
 import { currentGameSocket } from '../../store/selectors';
-import { lobbyState } from '../../store/atoms';
+import { appState, lobbyState } from '../../store/atoms';
 
 const Lobby = () => {
   const { players } = useRecoilValue(lobbyState);
+  const [app] = useRecoilState(appState);
   connect();
   const playersBlocks = players.map((player) => (
-    <LobbyPlayer key={player.name} name={player.name} color={player.color} />
+    <LobbyPlayer key={player.name} name={player.name} color={player.color} ready={player.ready} />
   ));
 
   const gameSocket = useRecoilValue(currentGameSocket);
@@ -24,7 +25,7 @@ const Lobby = () => {
   const getReady = () => {
     const data = {
       event: 'GET_READY',
-      message: 'revolko',
+      message: app.username,
     };
     gameSocket.send(JSON.stringify(data));
   };
