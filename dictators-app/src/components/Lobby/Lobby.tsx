@@ -40,7 +40,7 @@ const Lobby = () => {
         value={1}
         onChange={switchReady}
       >
-        Ready
+        {(ready) ? 'Ready' : 'Unready'}
       </ToggleButton>
     </div>
   );
