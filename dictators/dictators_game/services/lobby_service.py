@@ -20,6 +20,13 @@ class Player:
         self.total_land = 1
         self.premoves = []
 
+    def as_json(self):
+        return {
+            'username': self.user.username,
+            'color': self.color,
+            'ready': self.ready
+        }
+
     def get_username(self):
         return self.user.username
 

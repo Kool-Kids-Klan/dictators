@@ -1,10 +1,7 @@
 import React from 'react';
-import { SetterOrUpdater } from 'recoil';
-
-const roomCode = 1;
-const webSocketUrl = 'localhost:8000';
-const connectionString = `ws://${webSocketUrl}/ws/play/${roomCode}/`;
-export const gameSocket = new WebSocket(connectionString);
+import { SetterOrUpdater, useRecoilValue } from 'recoil';
+import { currentGameSocket } from '../../store/selectors';
+import { appState } from '../../store/atoms';
 
 export interface IGameBoard {
   army: number
@@ -25,12 +22,14 @@ interface IConnect {
 
 export const connect = (props: IConnect) => {
   const { setGame, players, setPlayers } = props;
+  const gameSocket = useRecoilValue(currentGameSocket);
+  const { username } = useRecoilValue(appState);
   gameSocket.onopen = function open() {
     console.log('WebSockets connection created.');
     // on websocket open, send the START event.
     gameSocket.send(JSON.stringify({
       event: 'JOIN_ROOM',
-      message: 'revolko',
+      message: username,
     }));
   };
 
