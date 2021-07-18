@@ -6,6 +6,7 @@ export interface IApp {
 export interface IPlayer {
   name: string
   color: string
+  ready: boolean
 }
 
 export interface ILobby {
@@ -46,4 +47,5 @@ export interface ISquare {
 export interface ILobbyPlayerProps {
   name: string,
   color: string,
+  ready: boolean
 }

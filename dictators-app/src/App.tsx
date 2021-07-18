@@ -11,10 +11,11 @@ function App() {
   const r: { [x: string]: string; } = { a: 'b' };
   const cookies: { key: string, value: string }[] = document.cookie.split(';').map((cookie) => {
     const [a, b] = cookie.split('=');
-    r[a] = b;
+    const trimmedA = a.trim();
+    r[trimmedA] = b;
     return { key: a, value: b };
   });
-  console.log(r);
+  console.log('this is cookies r', r);
   if (!authenticated && r.username) {
     setApp({ authenticated: true, username: r.username });
   }
