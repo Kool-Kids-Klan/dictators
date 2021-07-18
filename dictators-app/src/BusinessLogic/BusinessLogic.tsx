@@ -1,13 +1,28 @@
 import React from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 import { currentGameSocket } from '../store/selectors';
 import { appState, gameState, lobbyState } from '../store/atoms';
+import { ILobby, IPlayer } from '../resources/types/types';
+
+const changeUser = (players: ILobby, setPlayers: SetterOrUpdater<ILobby>,
+  changedPlayer: IPlayer) => {
+  const index = players.players.findIndex((player) => player.name === changedPlayer.name);
+  if (index === -1) {
+    alert('did not find user that want to change');
+  } else {
+    setPlayers({
+      players: [
+        ...players.players.slice(0, index), changedPlayer, ...players.players.slice(index + 1),
+      ],
+    });
+  }
+};
 
 export const connect = () => {
   const [, setGame] = useRecoilState(gameState);
   const gameSocket = useRecoilValue(currentGameSocket);
   const { username } = useRecoilValue(appState);
-  const [, setPlayers] = useRecoilState(lobbyState);
+  const [players, setPlayers] = useRecoilState(lobbyState);
   gameSocket.onopen = function open() {
     console.log('WebSockets connection created.');
     // on websocket open, send the START event.
@@ -62,6 +77,11 @@ export const connect = () => {
         break;
       case 'USER_READY':
         console.log('this user is ready', message);
+        changeUser(players, setPlayers, message);
+        break;
+      case 'USER_NOT_READY':
+        console.log('this user is not ready', message);
+        changeUser(players, setPlayers, message);
         break;
       default:
         console.log('No event');
