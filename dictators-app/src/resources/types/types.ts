@@ -26,7 +26,6 @@ export type Coor = [number, number];
 
 export interface IPremove {
   from: Coor,
-  to: Coor,
   direction: string
 }
 
@@ -38,13 +37,13 @@ export interface IScoreProps {
   scores: IScore[]
 }
 
-export interface ISquare {
+export interface ITile {
   army?: number,
   owner?: string,
   terrain?: string,
   selected?: string,
   select: () => void,
-  directions?: string,
+  directions: Set<string>,
 }
 
 export interface ILobbyPlayerProps {

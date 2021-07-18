@@ -32,11 +32,10 @@ const Game = () => {
       const selectClass = (coords[0] === selected[0] && coords[1] === selected[1]) ? 'selected' : '';
       const selectSquare = () => setSelected(coords);
       // TODO overwrites terrain in CSS
-      let directions = '';
+      const directions: Set<string> = new Set();
       premoves.forEach((premove) => {
-        if (premove.from[0] === coords[0] && premove.from[1] === coords[1]
-          && !directions.includes(premove.direction)) {
-          directions += `${premove.direction} `;
+        if (premove.from[0] === coords[0] && premove.from[1] === coords[1]) {
+          directions.add(premove.direction);
         }
       });
       return (
@@ -77,11 +76,18 @@ const Game = () => {
     } else if (e.code === 'KeyD' && selected[1] < game[0].length - 1) {
       x = [selected[0], selected[1] + 1];
       direction = 'right';
+    } else if (e.code === 'KeyE') {
+      const top = premoves.pop();
+      if (top == null) {
+        return;
+      }
+      setPremoves([...premoves]);
+      setSelected(top.from);
     } else if (e.code === 'KeyQ') {
       setPremoves([]);
       return;
     }
-    setPremoves([...premoves, { from: selected, to: x, direction }]);
+    setPremoves([...premoves, { from: selected, direction }]);
     setSelected(x);
   };
 

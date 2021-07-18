@@ -1,7 +1,7 @@
 import React from 'react';
-import { ISquare } from '../../resources/types/types';
+import { ITile } from '../../resources/types/types';
 
-const Square: React.FC<ISquare> = ({
+const Square: React.FC<ITile> = ({
   army, owner, terrain, selected, select, directions,
 }) => (
   <td className={`game__tile ${owner} ${terrain} ${selected} ${directions}`} onClick={select}>{army}</td>
