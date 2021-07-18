@@ -68,7 +68,8 @@ export const connect = () => {
         console.log('game board', message);
         break;
       case 'TICK':
-        console.log('this is thick');
+        console.log('this is thick', message);
+        setGame({ game: message });
         break;
       case 'JOIN_USER':
         console.log('this are connected users', message);
