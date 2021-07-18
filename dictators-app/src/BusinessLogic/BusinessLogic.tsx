@@ -79,6 +79,10 @@ export const connect = () => {
         console.log('this user is ready', message);
         changeUser(players, setPlayers, message);
         break;
+      case 'USER_NOT_READY':
+        console.log('this user is not ready', message);
+        changeUser(players, setPlayers, message);
+        break;
       default:
         console.log('No event');
     }
