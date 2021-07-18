@@ -5,7 +5,7 @@ from dictators.dictators_game.models import User
 from dictators.dictators_game.services.map_generator import CAPITAL_STARTING_ARMY
 
 
-PLAYER_COLORS = ["red", "blue", "green", "gold"]
+PLAYER_COLORS = ["red", "blue", "green", "purple"]
 MAX_PLAYERS = 4
 
 

@@ -8,6 +8,7 @@ from channels.db import database_sync_to_async
 from dictators.dictators_game.services.map_generator import generate_map
 from dictators.dictators_game.services.user_manager import get_user
 from dictators.dictators_game.services.lobby_service import temp_lobby
+from dictators.dictators_game.services.game_logic import Game
 
 
 class DictatorsConsumer(AsyncJsonWebsocketConsumer):
@@ -17,8 +18,10 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         self.room_group_name = ''
         self.task = None
         self.lobby = temp_lobby
+        self.game = None
+        self.game_map = None
 
-    async def tick(self, game_map):
+    async def tick(self):
         while True:
             await self.channel_layer.group_send(self.room_group_name, {
                 'type': 'send_message',
@@ -41,7 +44,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             for tile in row:
                 tile_dict = {
                     'army': tile.army,
-                    'owner': tile.owner,
+                    'owner': '' if tile.owner is None else tile.owner.color,
                     'terrain': tile.terrain
                 }
                 row_dict.append(tile_dict)
@@ -49,13 +52,24 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         return map_dict
 
     async def start_game(self):
-        game_map = await sync_to_async(generate_map)(16, 4, 8, 0)
-        game_map_json = self.map_to_json(game_map)
+        # self.game_map = await sync_to_async(generate_map)(16, 4, 8, 0)
+        self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 16, 8, 0)
+        self.game_map = self.game.map
+        game_map_json = self.map_to_json(self.game_map)
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
             'message': game_map_json,
             'event': 'LOAD_MAP'
         })
+
+        await self.channel_layer.group_send(self.room_group_name, {
+            'type': 'send_message',
+            'message': '',
+            'event': 'START'
+        })
+
+        loop = asyncio.get_event_loop()
+        self.task = loop.create_task(self.tick())
         # await self.tick(game_map)
 
     @database_sync_to_async
@@ -84,6 +98,8 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             'message': player.as_json(),
             'event': 'USER_READY'
         })
+        if self.lobby.all_ready():
+            await self.start_game()
 
     async def user_not_ready(self, username):
         user = await self.get_user_db(username)
