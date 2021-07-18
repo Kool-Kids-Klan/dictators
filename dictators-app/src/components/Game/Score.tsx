@@ -1,8 +1,5 @@
 import React from 'react';
-
-interface IScoreProps {
-  scores: { player: string, land: number, army: number, color: string }[]
-}
+import { IScoreProps } from '../../resources/types/types';
 
 const Score = ({ scores }: IScoreProps) => {
   const playerRows = scores.map((score) => (

@@ -10,7 +10,7 @@ class User(models.Model):
     username = models.CharField(max_length=20, unique=True)
     password_hash = models.TextField()
     password_salt = models.TextField()
-    email_address = models.EmailField()
+    email_address = models.EmailField(unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     games_played = models.IntegerField(default=0)
     games_won = models.IntegerField(default=0)

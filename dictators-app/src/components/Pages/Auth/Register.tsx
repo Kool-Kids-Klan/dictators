@@ -1,39 +1,68 @@
 import Form from 'react-bootstrap/Form';
 import React, { FormEvent, useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { useHistory } from 'react-router-dom';
-import { usersState } from '../../../store/atoms';
 import './Auth.css';
 import LoaderButton from '../../LoaderButton';
+import sha256 from '../../../utils/crypting';
+import { CREATE_USER_URL, reqOptions } from '../../../utils/endpoints';
 
 const Register = () => {
   const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [users, setUsers] = useRecoilState(usersState);
 
   function validateForm() {
-    return email.length > 0 && password.length > 0;
+    return email.length > 0 && username.length > 0 && password.length > 0;
   }
 
-  function handleSubmit(event: FormEvent) {
+  const registerUser = async () => {
+    const body = {
+      username,
+      password_hash: sha256(password),
+      password_salt: 'sample_salt',
+      email_address: email,
+    };
+    return fetch(CREATE_USER_URL, reqOptions(body))
+      .then((res) => res)
+      .catch((error) => alert(error));
+  };
+
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
     setIsLoading(true);
-    setUsers([...users, { email, password }]);
-    setIsLoading(false);
-    history.push('/confirm');
+    try {
+      const res = await registerUser();
+      if (!res) return;
+      if (res.status !== 204) {
+        alert((await res.json()).error);
+        return;
+      }
+
+      history.push('/confirm');
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
     <div className="Register Login">
       <Form onSubmit={handleSubmit}>
+        <Form.Group controlId="username">
+          <Form.Label>Username</Form.Label>
+          <Form.Control
+            autoFocus
+            type="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </Form.Group>
         <Form.Group controlId="email">
           <Form.Label>Email</Form.Label>
           <Form.Control
-            autoFocus
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

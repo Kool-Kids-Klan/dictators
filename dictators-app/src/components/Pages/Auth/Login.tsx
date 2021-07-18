@@ -1,35 +1,52 @@
 import React, { FormEvent, useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import sha256 from 'crypto-js/sha256';
 import { useHistory } from 'react-router-dom';
 import './Auth.css';
 import { useRecoilState } from 'recoil';
-import { appState, usersState } from '../../../store/atoms';
+import { appState } from '../../../store/atoms';
 import LoaderButton from '../../LoaderButton';
+import sha256 from '../../../utils/crypting';
+import { AUTH_USER_URL, reqOptions } from '../../../utils/endpoints';
 
 const Login = () => {
   const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [, setAppState] = useRecoilState(appState);
-  const [users] = useRecoilState(usersState);
 
   function validateForm() {
-    return email.length > 0 && password.length > 0;
+    return username.length > 0 && password.length > 0;
   }
 
-  function handleSubmit(event: FormEvent) {
+  const authenticate = async () => {
+    const body = {
+      username,
+      password_hash: sha256(password),
+      password_salt: 'sample_salt',
+    };
+    return fetch(AUTH_USER_URL, reqOptions(body))
+      .then((res) => res)
+      .catch((error) => alert(error));
+  };
+
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
     setIsLoading(true);
-    console.log(sha256(password));
-    if (users.some((user) => user.email === email && user.password === password)) {
-      setAppState({ authenticated: true });
+    try {
+      const res = await authenticate();
+      if (!res) return;
+      if (res.status !== 200) {
+        alert((await res.json()).error);
+        return;
+      }
+      setAppState({ authenticated: true, username });
+      const DAY7 = 1000 * 60 * 60 * 24 * 7;
+      document.cookie = `username=${username}; expires=${new Date(new Date().getTime() + DAY7)}`;
       history.push('/confirm');
-    } else {
-      alert('invalid');
+    } finally {
       setIsLoading(false);
     }
   }
@@ -37,13 +54,13 @@ const Login = () => {
   return (
     <div className="Login">
       <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="email">
-          <Form.Label>Email</Form.Label>
+        <Form.Group controlId="username">
+          <Form.Label>Username</Form.Label>
           <Form.Control
             autoFocus
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </Form.Group>
         <Form.Group controlId="password">

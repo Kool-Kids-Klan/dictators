@@ -1,28 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './Game.css';
-import { SetterOrUpdater, useRecoilState, useResetRecoilState } from 'recoil';
+import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 import Tile from './Tile';
 import Score from './Score';
-import {
-  Coor, gameState, premovesState, scoreState,
-} from '../../store/atoms';
+import { gameState, premovesState, scoreState } from '../../store/atoms';
+import { Coor } from '../../resources/types/types';
 
-export interface IGameTile {
-  army: number
-  owner: string
-  terrain: string
-}
-
-interface IGame {
-  game: IGameTile[][]
-  setGame: SetterOrUpdater<IGameTile[][]>
-}
-
-const Game: React.FC<IGame> = (props) => {
-  const { game, setGame } = props;
+const Game = () => {
+  const { game } = useRecoilValue(gameState);
   const [premoves, setPremoves] = useRecoilState(premovesState);
-  const [{ selected }, setSelected] = useRecoilState(gameState);
-  const [score, setScore] = useRecoilState(scoreState);
+  const [scores, setScores] = useRecoilState(scoreState);
+  // TODO delete default value / set to base Coor from backend
+  const [selected, setSelected]: [Coor, SetterOrUpdater<Coor>] = useState([-1, -1]);
   // connect(setGame);
 
   // const game = [
@@ -40,8 +29,8 @@ const Game: React.FC<IGame> = (props) => {
   const board = game.map((row, y) => {
     const squares = row.map((square, x) => {
       const coords: Coor = [y, x];
-      const selectClass = (selected && coords[0] === selected[0] && coords[1] === selected[1]) ? 'selected' : '';
-      const selectSquare = () => setSelected({ selected: coords });
+      const selectClass = (coords[0] === selected[0] && coords[1] === selected[1]) ? 'selected' : '';
+      const selectSquare = () => setSelected(coords);
       // TODO overwrites terrain in CSS
       let directions = '';
       premoves.forEach((premove) => {
@@ -93,7 +82,7 @@ const Game: React.FC<IGame> = (props) => {
       return;
     }
     setPremoves([...premoves, { from: selected, to: x, direction }]);
-    setSelected({ selected: x });
+    setSelected(x);
   };
 
   return (
@@ -103,7 +92,7 @@ const Game: React.FC<IGame> = (props) => {
           {board}
         </tbody>
       </table>
-      <Score scores={score} />
+      <Score scores={scores} />
     </div>
   );
 };

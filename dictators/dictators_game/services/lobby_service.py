@@ -2,9 +2,7 @@ from typing import List
 import random
 
 from dictators.dictators_game.models import User
-
-# TODO
-# chceme udrzovat lobby aj po zacati hry? aby sa hraci mohli po hre reconnectnut
+from dictators.dictators_game.services.map_generator import CAPITAL_STARTING_ARMY
 
 
 PLAYER_COLORS = ["red", "blue", "green", "gold"]
@@ -16,6 +14,21 @@ class Player:
         self.user: User = user
         self.color = color
         self.ready = False
+
+        self.alive = True
+        self.total_army = CAPITAL_STARTING_ARMY
+        self.total_land = 1
+        self.premoves = []
+
+    def as_json(self):
+        return {
+            'username': self.user.username,
+            'color': self.color,
+            'ready': self.ready
+        }
+
+    def get_username(self):
+        return self.user.username
 
 
 class Lobby:
@@ -31,6 +44,9 @@ class Lobby:
     def get_player(self, user: User) -> Player:
         # assuming that the given user is connected in the lobby
         return [player for player in self.players if player.user == user][0]
+
+    def get_all_players(self) -> List[Player]:
+        return self.players
 
     def add_player(self, user: User) -> bool:
         # check if user isn't already in lobby and if MAX_PLAYERS isn't exceeded

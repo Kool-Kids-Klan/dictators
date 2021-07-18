@@ -27,7 +27,7 @@ class CreateUser(APIView):
                                           params["email_address"])
         if not result:
             return Response(status=409, data={
-                "error": "User with such username already exists."
+                "error": "User with such username or email already exists."
             })
         return Response(status=204)
 
@@ -55,7 +55,7 @@ class DeleteUser(APIView):
 
 class AuthenticateUser(APIView):
 
-    def get(self, request):
+    def post(self, request):
         params = request.data
         if ("username" not in params or
                 "password_hash" not in params or

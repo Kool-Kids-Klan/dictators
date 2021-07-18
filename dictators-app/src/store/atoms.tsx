@@ -1,46 +1,7 @@
 import { atom } from 'recoil';
-
-interface IApp {
-  authenticated: boolean,
-}
-
-interface IUser {
-  email: string,
-  password: String
-}
-
-export type Coor = [number, number];
-
-interface IGame {
-  selected?: Coor
-}
-
-interface IPremove {
-  from: Coor,
-  to: Coor,
-  direction: string
-}
-
-interface IScore {
-  player: string,
-  land: number,
-  army: number,
-  color: string
-}
-
-export const usersState = atom<IUser[]>({
-  key: 'user',
-  default: [
-    {
-      email: 'a@g',
-      password: '123',
-    },
-    {
-      email: 'b@b',
-      password: '222',
-    },
-  ],
-});
+import {
+  IApp, IGame, ILobby, IPremove, IScore,
+} from '../resources/types/types';
 
 export const appState = atom<IApp>({
   key: 'auth',
@@ -49,9 +10,18 @@ export const appState = atom<IApp>({
   },
 });
 
+export const lobbyState = atom<ILobby>({
+  key: 'lobby',
+  default: {
+    players: [],
+  },
+});
+
 export const gameState = atom<IGame>({
   key: 'game',
-  default: {},
+  default: {
+    game: [],
+  },
 });
 
 export const premovesState = atom<IPremove[]>({
