@@ -8,30 +8,30 @@ import Confirmation from './components/Pages/Auth/Confirmation';
 import Game from './components/Game/Game';
 import Lobby from './components/Lobby/Lobby';
 
-export default function Routes() {
-  return (
-    <Switch>
-      <Route exact path="/">
-        <Home />
-      </Route>
-      <Route exact path="/login">
-        <Login />
-      </Route>
-      <Route exact path="/signup">
-        <Register />
-      </Route>
-      <Route exact path="/confirm">
-        <Confirmation />
-      </Route>
-      <Route exact path="/game">
-        <Game />
-      </Route>
-      <Route exact path="/lobby">
-        <Lobby />
-      </Route>
-      <Route>
-        <NotFound />
-      </Route>
-    </Switch>
-  );
-}
+const Routes = () => (
+  <Switch>
+    <Route exact path="/">
+      <Home />
+    </Route>
+    <Route exact path="/login">
+      <Login />
+    </Route>
+    <Route exact path="/signup">
+      <Register />
+    </Route>
+    <Route exact path="/confirm">
+      <Confirmation />
+    </Route>
+    <Route exact path="/game">
+      <Game />
+    </Route>
+    <Route exact path="/lobby">
+      <Lobby />
+    </Route>
+    <Route>
+      <NotFound />
+    </Route>
+  </Switch>
+);
+
+export default Routes;

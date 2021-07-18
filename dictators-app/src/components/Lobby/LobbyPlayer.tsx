@@ -1,9 +1,5 @@
 import React from 'react';
-
-interface ILobbyPlayerProps {
-  name: string,
-  color: string,
-}
+import { ILobbyPlayerProps } from '../../resources/types/types';
 
 const LobbyPlayer = ({ name, color }: ILobbyPlayerProps) => (
   <div className="lobby-player">
