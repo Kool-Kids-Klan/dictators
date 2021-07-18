@@ -66,7 +66,8 @@ class Game:
             "username": player.get_username(),
             "army": player.total_army,
             "land": player.total_land,
-            "alive": player.alive
+            "alive": player.alive,
+            "color": player.color
         } for player in self.players]
         scoreboard.sort(key=lambda player: player["army"], reverse=True)
         return scoreboard

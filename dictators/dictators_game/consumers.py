@@ -28,7 +28,10 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                 player_name = player.user.username
                 await self.channel_layer.group_send(player_name, {
                     'type': 'send_message',
-                    'message': game_tick['maps'][player_name],
+                    'message': {
+                        'map': game_tick['maps'][player_name],
+                        'scoreboard': game_tick['scoreboard']
+                    },
                     'event': 'TICK'
                 })
 
