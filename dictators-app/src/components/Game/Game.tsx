@@ -3,7 +3,8 @@ import './Game.css';
 import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 import Tile from './Tile';
 import Score from './Score';
-import { Coor, gameState, premovesState } from '../../store/atoms';
+import { gameState, premovesState } from '../../store/atoms';
+import { Coor } from '../../resources/types/types';
 
 const Game = () => {
   const { game } = useRecoilValue(gameState);
