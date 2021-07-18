@@ -19,7 +19,7 @@ table,
 
     height: 50px;
     width: 50px;
-
+    background-clip: padding-box; /* workaround for bug https://bugzilla.mozilla.org/show_bug.cgi?id=688556  */
     background-color: var(--color-tile-default);
     background-size: cover;
 
