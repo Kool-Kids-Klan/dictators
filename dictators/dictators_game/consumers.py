@@ -8,6 +8,7 @@ from channels.db import database_sync_to_async
 from dictators.dictators_game.services.user_manager import get_user
 from dictators.dictators_game.services.lobby_service import temp_lobby
 from dictators.dictators_game.services.game_logic import Game
+from dictators.dictators_game.services.lobby_service import Lobby, LOBBIES
 
 
 class DictatorsConsumer(AsyncJsonWebsocketConsumer):
@@ -16,7 +17,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         self.room_name = ''
         self.room_group_name = ''
         self.task = None
-        self.lobby = temp_lobby
+        self.lobby = None
         self.game = None
         self.game_map = None
 
@@ -96,6 +97,15 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             'event': 'USER_NOT_READY'
         })
 
+    async def user_exit_lobby(self, username):
+        user = await self.get_user_db(username)
+        self.lobby.remove_player(user)
+        # lobby is empty, remove lobby
+        if not self.lobby.get_all_players():
+            LOBBIES.remove({self.room_name: self.lobby})
+
+        await self.disconnect(200)
+
     async def connect(self):
         print('User is trying to connect to room')
 
@@ -108,6 +118,8 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
+        self.lobby = Lobby()
+        LOBBIES.append({self.room_name: self.lobby})
 
     async def disconnect(self, close_code):
         print("Disconnected")
@@ -164,6 +176,9 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
         if event == 'NOT_READY':
             await self.user_not_ready(message)
+
+        if event == 'EXIT_LOBBY':
+            await self.user_exit_lobby(message)
 
     async def send_message(self, res):
         """ Receive message from room group """
