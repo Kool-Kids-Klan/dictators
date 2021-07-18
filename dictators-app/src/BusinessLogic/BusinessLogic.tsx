@@ -2,7 +2,9 @@ import React from 'react';
 import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 import { useHistory } from 'react-router-dom';
 import { currentGameSocket } from '../store/selectors';
-import { appState, gameState, lobbyState } from '../store/atoms';
+import {
+  appState, gameState, lobbyState, scoreState,
+} from '../store/atoms';
 import { ILobby, IPlayer } from '../resources/types/types';
 
 const changeUser = (players: ILobby, setPlayers: SetterOrUpdater<ILobby>,
@@ -24,6 +26,7 @@ export const connect = () => {
   const gameSocket = useRecoilValue(currentGameSocket);
   const { username } = useRecoilValue(appState);
   const [players, setPlayers] = useRecoilState(lobbyState);
+  const [scoreBoard, setScoreBoard] = useRecoilState(scoreState);
   const history = useHistory();
   gameSocket.onopen = function open() {
     console.log('WebSockets connection created.');
@@ -69,7 +72,8 @@ export const connect = () => {
         break;
       case 'TICK':
         console.log('this is thick', message);
-        setGame({ game: message });
+        setGame({ game: message.map });
+        setScoreBoard(message.scoreboard);
         break;
       case 'JOIN_USER':
         console.log('this are connected users', message);

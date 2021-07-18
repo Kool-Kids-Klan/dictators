@@ -41,12 +41,12 @@ export const premovesState = atom<IPremove[]>({
 export const scoreState = atom<IScore[]>({
   key: 'scores',
   default: [{
-    player: 'Paly', land: 69, army: 420, color: 'blue',
+    username: 'Paly', land: 69, army: 420, color: 'blue',
   }, {
-    player: 'Duri', land: 96, army: 50, color: 'red',
+    username: 'Duri', land: 96, army: 50, color: 'red',
   }, {
-    player: 'Dano', land: 9, army: 40, color: 'green',
+    username: 'Dano', land: 9, army: 40, color: 'green',
   }, {
-    player: 'Filo', land: 79, army: 42, color: 'purple',
+    username: 'Filo', land: 79, army: 42, color: 'purple',
   }],
 });
