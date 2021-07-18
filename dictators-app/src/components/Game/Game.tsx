@@ -11,20 +11,7 @@ const Game = () => {
   const [premoves, setPremoves] = useRecoilState(premovesState);
   // TODO delete default value / set to base Coor from backend
   const [selected, setSelected]: [Coor, SetterOrUpdater<Coor>] = useState([-1, -1]);
-  // connect(setGame);
 
-  // const game = [
-  //   [{ army: 1, owner: 'blue', terrain: 'barracks' }, { army: 120, owner: 'blue' },
-  //   {}, { army: 10, owner: 'red' }],
-  //   [{ army: 1, owner: 'blue' }, { army: 120, owner: 'blue', terrain: 'capital' },
-  //   { army: 1, owner: 'red', terrain: 'mountains' }, { army: 10, owner: 'red' }],
-  //   [{ army: 1, owner: 'blue' }, {}, { army: 1, owner: 'red' },
-  //   { army: 10, owner: 'green' }],
-  //   [{ terrain: 'capital' }, { army: 120, owner: 'blue' },
-  //   { army: 1, owner: 'red', terrain: 'barracks' }, { army: 10, owner: 'red' }],
-  // ];
-
-  console.log('this is game', game);
   const board = game.map((row, y) => {
     const squares = row.map((square, x) => {
       const coords: Coor = [y, x];

@@ -1,5 +1,6 @@
 import React from 'react';
 import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
+import { useHistory } from 'react-router-dom';
 import { currentGameSocket } from '../store/selectors';
 import { appState, gameState, lobbyState } from '../store/atoms';
 import { ILobby, IPlayer } from '../resources/types/types';
@@ -23,6 +24,7 @@ export const connect = () => {
   const gameSocket = useRecoilValue(currentGameSocket);
   const { username } = useRecoilValue(appState);
   const [players, setPlayers] = useRecoilState(lobbyState);
+  const history = useHistory();
   gameSocket.onopen = function open() {
     console.log('WebSockets connection created.');
     // on websocket open, send the START event.
@@ -49,6 +51,7 @@ export const connect = () => {
     const { event } = data;
     switch (event) {
       case 'START':
+        history.push('/game');
         break;
       case 'END':
         alert(message);
