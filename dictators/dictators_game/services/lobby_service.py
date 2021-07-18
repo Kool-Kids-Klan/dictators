@@ -45,6 +45,9 @@ class Lobby:
         # assuming that the given user is connected in the lobby
         return [player for player in self.players if player.user == user][0]
 
+    def get_all_players(self) -> List[Player]:
+        return self.players
+
     def add_player(self, user: User) -> bool:
         # check if user isn't already in lobby and if MAX_PLAYERS isn't exceeded
         if user not in self._get_users() and len(self.players) < MAX_PLAYERS:

@@ -1,23 +1,12 @@
 import React, { useState } from 'react';
 import './Game.css';
-import { SetterOrUpdater, useRecoilState } from 'recoil';
+import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 import Tile from './Tile';
 import Score from './Score';
-import { Coor, premovesState } from '../../store/atoms';
+import { Coor, gameState, premovesState } from '../../store/atoms';
 
-export interface IGameTile {
-  army: number
-  owner: string
-  terrain: string
-}
-
-interface IGame {
-  game: IGameTile[][]
-  setGame: SetterOrUpdater<IGameTile[][]>
-}
-
-const Game: React.FC<IGame> = (props) => {
-  const { game } = props;
+const Game = () => {
+  const { game } = useRecoilValue(gameState);
   const [premoves, setPremoves] = useRecoilState(premovesState);
   // TODO delete default value / set to base Coor from backend
   const [selected, setSelected]: [Coor, SetterOrUpdater<Coor>] = useState([-1, -1]);

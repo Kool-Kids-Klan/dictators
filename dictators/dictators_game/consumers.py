@@ -66,8 +66,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         # my_user = {'name': 'revolko', 'color': 'red'}
         user = await self.get_user_db(username)
         self.lobby.add_player(user)
-        player = self.lobby.get_player(user)
-        player_dict = {'name': player.user.username, 'color': player.color, 'ready': player.ready}
+        player_dict = [{'name': player.user.username, 'color': player.color, 'ready': player.ready} for player in self.lobby.get_all_players()]
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
             'message': player_dict,
