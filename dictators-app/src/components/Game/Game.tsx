@@ -5,13 +5,15 @@ import Tile from './Tile';
 import Score from './Score';
 import { gameState, premovesState, scoreState } from '../../store/atoms';
 import { Coor } from '../../resources/types/types';
+import GameMenu from './GameMenu';
 
 const Game = () => {
   const { game } = useRecoilValue(gameState);
   const [premoves, setPremoves] = useRecoilState(premovesState);
-  const [scores, setScores] = useRecoilState(scoreState);
+  const scores = useRecoilValue(scoreState);
   // TODO delete default value / set to base Coor from backend
   const [selected, setSelected]: [Coor, SetterOrUpdater<Coor>] = useState([-1, -1]);
+  const [menu, setMenu] = useState(false);
 
   const board = game.map((row, y) => {
     const squares = row.map((square, x) => {
@@ -75,6 +77,9 @@ const Game = () => {
       }
       setPremoves([]);
       return;
+    } else if (e.code === 'Escape') {
+      setMenu(!menu);
+      return;
     } else {
       return;
     }
@@ -82,8 +87,13 @@ const Game = () => {
     setSelected(x);
   };
 
+  const gameMenu = (menu) ? (
+    <GameMenu />
+  ) : <></>;
+
   return (
     <div className="game container-fluid">
+      {gameMenu}
       <table className="game__table">
         <tbody>
           {board}

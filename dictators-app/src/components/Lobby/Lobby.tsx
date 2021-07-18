@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { ToggleButton } from 'react-bootstrap';
 import LobbyPlayer from './LobbyPlayer';
 import { connect } from '../../BusinessLogic/BusinessLogic';
 import { currentGameSocket } from '../../store/selectors';
 import { appState, lobbyState } from '../../store/atoms';
+import ExitButton from '../ExitButton';
 
 const Lobby = () => {
   const { id, players } = useRecoilValue(lobbyState);
-  const [app] = useRecoilState(appState);
+  const { username } = useRecoilValue(appState);
   const [ready, setReady] = useState(false);
   connect();
   const playersBlocks = players.map((player) => (
@@ -18,12 +19,10 @@ const Lobby = () => {
   const gameSocket = useRecoilValue(currentGameSocket);
   const switchReady = () => {
     setReady(!ready);
-    const data = (ready) ? {
-      event: 'NOT_READY',
-      message: app.username,
-    } : {
-      event: 'GET_READY',
-      message: app.username,
+    const event = (ready) ? 'NOT_READY' : 'GET_READY';
+    const data = {
+      event,
+      message: username,
     };
     gameSocket.send(JSON.stringify(data));
   };
@@ -46,6 +45,7 @@ const Lobby = () => {
       >
         {(ready) ? 'Ready' : 'Unready'}
       </ToggleButton>
+      <ExitButton />
     </div>
   );
 };
