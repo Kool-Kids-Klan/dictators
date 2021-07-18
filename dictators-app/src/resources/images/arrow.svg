@@ -9,5 +9,5 @@
     height="192pt"
     viewBox="0 0 192 192">
 <defs/>
-<path id="shape0" transform="translate(171.720003508188, 85.3200020127206)" fill="#ffffff" fill-rule="evenodd" stroke="#ffffff" stroke-width="1.44" stroke-linecap="square" stroke-linejoin="round" d="M16.08 17.28L0 0L0 35.28Z"/><path id="shape1" transform="translate(132.659273848859, 102.497060871799)" fill="none" stroke="#ffffff" stroke-width="5.04" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" d="M36.48 0L0 0.12"/>
+<path id="shape0" transform="matrix(0.997371270417921 0 0 0.996541127362585 170.271724210706 80.52)" fill="#ffffff" fill-rule="evenodd" stroke="#ffffff" stroke-width="4.32" stroke-linecap="square" stroke-linejoin="round" d="M14.16 15.2167L0 0L0 31.0675Z"/><path id="shape1" transform="matrix(0.997371270417921 0 0 0.996541127362585 140.714499442904 95.9402075296025)" fill="none" stroke="#ffffff" stroke-width="4.32" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" d="M36.48 0L0 0.12"/>
 </svg>

@@ -20,7 +20,16 @@ export const lobbyState = atom<ILobby>({
 export const gameState = atom<IGame>({
   key: 'game',
   default: {
-    game: [],
+    game: [
+      [{ army: 1, owner: 'blue', terrain: 'barracks' }, { army: 120, owner: 'blue' },
+        {}, { army: 10, owner: 'red' }],
+      [{ army: 1, owner: 'blue' }, { army: 120, owner: 'blue', terrain: 'capital' },
+        { army: 1, owner: 'red', terrain: 'mountains' }, { army: 10, owner: 'red' }],
+      [{ army: 1, owner: 'blue' }, {}, { army: 1, owner: 'red' },
+        { army: 10, owner: 'green' }],
+      [{ terrain: 'capital' }, { army: 120, owner: 'blue' },
+        { army: 1, owner: 'red', terrain: 'barracks' }, { army: 10, owner: 'red' }],
+    ],
   },
 });
 

@@ -14,17 +14,6 @@ const Game = () => {
   const [selected, setSelected]: [Coor, SetterOrUpdater<Coor>] = useState([-1, -1]);
   // connect(setGame);
 
-  // const game = [
-  //   [{ army: 1, owner: 'blue', terrain: 'barracks' }, { army: 120, owner: 'blue' },
-  //   {}, { army: 10, owner: 'red' }],
-  //   [{ army: 1, owner: 'blue' }, { army: 120, owner: 'blue', terrain: 'capital' },
-  //   { army: 1, owner: 'red', terrain: 'mountains' }, { army: 10, owner: 'red' }],
-  //   [{ army: 1, owner: 'blue' }, {}, { army: 1, owner: 'red' },
-  //   { army: 10, owner: 'green' }],
-  //   [{ terrain: 'capital' }, { army: 120, owner: 'blue' },
-  //   { army: 1, owner: 'red', terrain: 'barracks' }, { army: 10, owner: 'red' }],
-  // ];
-
   console.log('this is game', game);
   const board = game.map((row, y) => {
     const squares = row.map((square, x) => {
@@ -61,7 +50,6 @@ const Game = () => {
     if (!selected) {
       return;
     }
-
     let x: Coor | undefined = selected;
     let direction = '';
     if (e.code === 'KeyW' && selected[0] > 0) {
@@ -77,14 +65,19 @@ const Game = () => {
       x = [selected[0], selected[1] + 1];
       direction = 'right';
     } else if (e.code === 'KeyE') {
-      const top = premoves.pop();
-      if (top == null) {
+      if (premoves.length < 1) {
         return;
       }
-      setPremoves([...premoves]);
-      setSelected(top.from);
+      setPremoves(premoves.slice(0, -1));
+      setSelected(premoves[premoves.length - 1].from);
+      return;
     } else if (e.code === 'KeyQ') {
+      if (premoves.length > 0) {
+        setSelected(premoves[0].from);
+      }
       setPremoves([]);
+      return;
+    } else {
       return;
     }
     setPremoves([...premoves, { from: selected, direction }]);

@@ -13,9 +13,9 @@ export interface ILobby {
 }
 
 export interface IGameTile {
-  army: number
-  owner: string
-  terrain: string
+  army?: number
+  owner?: string
+  terrain?: string
 }
 
 export interface IGame {
