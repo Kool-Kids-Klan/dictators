@@ -22,7 +22,7 @@ class Player:
 
     def as_json(self):
         return {
-            'username': self.user.username,
+            'name': self.user.username,
             'color': self.color,
             'ready': self.ready
         }
