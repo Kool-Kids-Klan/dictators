@@ -23,11 +23,16 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
     async def tick(self):
         while True:
-            await self.channel_layer.group_send(self.room_group_name, {
-                'type': 'send_message',
-                'message': '',
-                'event': 'TICK'
-            })
+            game_tick = await sync_to_async(self.game.tick)()
+
+            for player in self.lobby.get_all_players():
+                player_name = player.user.username
+                await self.channel_layer.group_send(player_name, {
+                    'type': 'send_message',
+                    'message': game_tick['maps'][player_name],
+                    'event': 'TICK'
+                })
+
             print('tick is happening')
             await asyncio.sleep(5)
 
@@ -54,13 +59,13 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
     async def start_game(self):
         # self.game_map = await sync_to_async(generate_map)(16, 4, 8, 0)
         self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 16, 8, 0)
-        self.game_map = self.game.map
-        game_map_json = self.map_to_json(self.game_map)
-        await self.channel_layer.group_send(self.room_group_name, {
-            'type': 'send_message',
-            'message': game_map_json,
-            'event': 'LOAD_MAP'
-        })
+        # self.game_map = self.game.map
+        # game_map_json = self.map_to_json(self.game_map)
+        # await self.channel_layer.group_send(self.room_group_name, {
+        #     'type': 'send_message',
+        #     'message': game_map_json,
+        #     'event': 'LOAD_MAP'
+        # })
 
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
@@ -87,6 +92,11 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             'message': player_dict,
             'event': 'JOIN_USER'
         })
+
+        await self.channel_layer.group_add(
+            user.username,
+            self.channel_name
+        )
 
     async def user_get_ready(self, username):
         user = await self.get_user_db(username)
@@ -117,6 +127,8 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
         self.room_name = self.scope['url_route']['kwargs']['room_code']
         self.room_group_name = f'room_{self.room_name}'
+
+        print('this is channel name', self.channel_name)
 
         # Join room group
         await self.channel_layer.group_add(
