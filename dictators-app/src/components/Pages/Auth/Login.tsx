@@ -6,6 +6,7 @@ import { useRecoilState } from 'recoil';
 import { appState } from '../../../store/atoms';
 import LoaderButton from '../../LoaderButton';
 import sha256 from '../../../utils/crypting';
+import { AUTH_USER_URL, reqOptions } from '../../../utils/endpoints';
 
 const Login = () => {
   const history = useHistory();
@@ -20,31 +21,32 @@ const Login = () => {
   }
 
   const authenticate = async () => {
-    const reqOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: 'http://localhost:3000',
-      },
-      body: JSON.stringify({
-        username,
-        password_hash: sha256(password),
-        password_salt: 'sample_salt',
-      }),
+    const body = {
+      username,
+      password_hash: sha256(password),
+      password_salt: 'sample_salt',
     };
-    const x = await fetch('http://localhost:8000/api/user/authenticate', reqOptions);
-    return x.status === 200;
+    return fetch(AUTH_USER_URL, reqOptions(body))
+      .then((res) => res)
+      .catch((error) => alert(error));
   };
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
     setIsLoading(true);
-    if (await authenticate()) {
+    try {
+      const res = await authenticate();
+      if (!res) return;
+      if (res.status !== 200) {
+        alert((await res.json()).error);
+        return;
+      }
       setAppState({ authenticated: true, username });
+      const DAY7 = 1000 * 60 * 60 * 24 * 7;
+      document.cookie = `username=${username}; expires=${new Date(new Date().getTime() + DAY7)}`;
       history.push('/confirm');
-    } else {
-      alert('invalid');
+    } finally {
       setIsLoading(false);
     }
   }

@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import './Auth.css';
 import LoaderButton from '../../LoaderButton';
 import sha256 from '../../../utils/crypting';
+import { CREATE_USER_URL, reqOptions } from '../../../utils/endpoints';
 
 const Register = () => {
   const history = useHistory();
@@ -18,48 +19,38 @@ const Register = () => {
   }
 
   const registerUser = async () => {
-    const reqOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: 'http://localhost:3000',
-      },
-      body: JSON.stringify({
-        username,
-        password_hash: sha256(password),
-        password_salt: 'sample_salt',
-        email_address: email,
-      }),
+    const body = {
+      username,
+      password_hash: sha256(password),
+      password_salt: 'sample_salt',
+      email_address: email,
     };
-    const x = await fetch('http://localhost:8000/api/user/create', reqOptions);
-    return x.status === 204;
+    return fetch(CREATE_USER_URL, reqOptions(body))
+      .then((res) => res)
+      .catch((error) => alert(error));
   };
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
     setIsLoading(true);
-    if (!await registerUser()) {
-      alert('Invalid');
-      return;
-    }
+    try {
+      const res = await registerUser();
+      if (!res) return;
+      if (res.status !== 204) {
+        alert((await res.json()).error);
+        return;
+      }
 
-    setIsLoading(false);
-    history.push('/confirm');
+      history.push('/confirm');
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
     <div className="Register Login">
       <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="email">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            autoFocus
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </Form.Group>
         <Form.Group controlId="username">
           <Form.Label>Username</Form.Label>
           <Form.Control
@@ -67,6 +58,14 @@ const Register = () => {
             type="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+          />
+        </Form.Group>
+        <Form.Group controlId="email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </Form.Group>
         <Form.Group controlId="password">

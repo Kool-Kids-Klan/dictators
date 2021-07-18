@@ -27,7 +27,7 @@ class CreateUser(APIView):
                                           params["email_address"])
         if not result:
             return Response(status=409, data={
-                "error": "User with such username already exists."
+                "error": "User with such username or email already exists."
             })
         return Response(status=204)
 

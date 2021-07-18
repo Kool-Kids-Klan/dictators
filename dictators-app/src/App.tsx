@@ -1,20 +1,29 @@
 import React from 'react';
 import './App.css';
-import { RecoilRoot } from 'recoil';
+import { useRecoilState } from 'recoil';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { MyNavbar as Navbar } from './components/Nav/MyNavbar';
 import Routes from './Routes';
+import { appState } from './store/atoms';
 
 function App() {
+  const [{ authenticated }, setApp] = useRecoilState(appState);
+  const r: { [x: string]: string; } = { a: 'b' };
+  const cookies: { key: string, value: string }[] = document.cookie.split(';').map((cookie) => {
+    const [a, b] = cookie.split('=');
+    r[a] = b;
+    return { key: a, value: b };
+  });
+  console.log(r);
+  if (!authenticated && r.username) {
+    setApp({ authenticated: true, username: r.username });
+  }
+
   return (
-    <RecoilRoot>
-      <React.Suspense fallback={<div>Loading...</div>}>
-        <div className="App container-fluid py-3">
-          <Navbar />
-          <Routes />
-        </div>
-      </React.Suspense>
-    </RecoilRoot>
+    <div className="App container-fluid py-3">
+      <Navbar />
+      <Routes />
+    </div>
   );
 }
 
