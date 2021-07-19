@@ -99,7 +99,7 @@ export const connect = () => {
     switch (event) {
       case 'START':
         history.push('/game');
-        connectTick(setGame, gameSocketUrl);
+        // connectTick(setGame, gameSocketUrl);
         break;
       case 'END':
         alert(message);
@@ -151,6 +151,9 @@ export const connect = () => {
       case 'USER_NOT_READY':
         console.log('this user is not ready', message);
         changeUser(lobby, setLobby, message);
+        break;
+      case 'START_TICKING_BRO':
+        connectTick(setGame, gameSocketUrl);
         break;
       default:
         console.log('No event');
