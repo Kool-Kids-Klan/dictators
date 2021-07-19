@@ -4,7 +4,6 @@ import random
 from dictators.dictators_game.services.map_generator import generate_map, draw_map
 from dictators.dictators_game.services.lobby_service import Player
 
-
 # TODO: cleanup, beautify, niekde (x, y) pomenit na Tile?
 # TODO: surrender
 
@@ -25,6 +24,7 @@ class Game:
         self._assign_capitals()
         self.round_n = 1
         self.tick_n = 0
+        self.winner = None
 
     def _get_player_by_username(self, username: str) -> Player:
         """
@@ -42,6 +42,11 @@ class Game:
         :return: the number of remaining players alive
         """
         return [player for player in self.players if player.alive]
+
+    def _check_for_winner(self) -> None:
+        players_alive = self._get_players_alive()
+        if len(players_alive) == 1:
+            self.winner = players_alive[0]
 
     def _assign_capitals(self) -> None:
         """
@@ -76,10 +81,11 @@ class Game:
         :param player: considered player
         :return: True if `tile` neighbors with `player`, else otherwise
         """
+        print("_tile_neighbors_with_player")
         x, y = tile
         for x_shift in range(-1, 2):
             for y_shift in range(-1, 2):
-                if self.map[y+y_shift][x+x_shift].owner == player:
+                if self.map[y + y_shift][x + x_shift].owner == player:
                     return True
         return False
 
@@ -93,11 +99,12 @@ class Game:
         :param player: discovering player
         :return: nothing
         """
+        print("discover_tile_and_adjacent")
         x, y = tile
         for x_shift in range(-1, 2):
             for y_shift in range(-1, 2):
-                if self._are_valid_coordinates(x+x_shift, y+y_shift):
-                    self.map[y+y_shift][x+x_shift].discoveredBy.add(player)
+                if self._are_valid_coordinates(x + x_shift, y + y_shift):
+                    self.map[y + y_shift][x + x_shift].discoveredBy.add(player)
 
     def _remove_tile_visibility(self,
                                 tile: Tuple[int, int],
@@ -109,15 +116,16 @@ class Game:
         :param player: the old owner of the tile
         :return: nothing
         """
+        print("_remove_tile_visibility")
         x, y = tile
         self.map[y][x].discoveredBy.remove(player)
         for x_shift in range(-1, 2):
             for y_shift in range(-1, 2):
-                adj_tile = (x+x_shift, y+y_shift)
+                adj_tile = (x + x_shift, y + y_shift)
                 if (adj_tile != tile and
                         self._are_valid_coordinates(*adj_tile) and
                         not self._tile_neighbors_with_player(adj_tile, player)):
-                    self.map[y+y_shift][x+x_shift].discoveredBy.remove(player)
+                    self.map[y + y_shift][x + x_shift].discoveredBy.remove(player)
         if self._tile_neighbors_with_player((x, y), player):
             self.map[y][x].discoveredBy.add(player)
 
@@ -187,6 +195,7 @@ class Game:
         :param player: new owner
         :param army: amount of army that the attacker enters the tile with
         """
+        print(f"_capture_tile {tile} enter")
         x, y = tile
         captured_tile = self.map[y][x]
         old_owner = captured_tile.owner
@@ -202,6 +211,7 @@ class Game:
         captured_tile.army = army - captured_tile.army
 
         if captured_tile.terrain == "capital":
+            print("capturing capital")
             old_owner.alive = False
             old_owner.total_army = 0
             old_owner.total_land = 0
@@ -216,6 +226,8 @@ class Game:
                     if old_owner in current_tile.discoveredBy:
                         current_tile.discoveredBy.remove(old_owner)
                         current_tile.discoveredBy.add(player)
+            self._check_for_winner()
+        print(f"_capture_tile {tile} leave")
 
     def _combat(self, attacker: Tuple[int, int], defender: Tuple[int, int]) -> None:
         """
@@ -225,23 +237,29 @@ class Game:
         :param defender: (x,y) coordinates of the tile to attack
         :return: nothing
         """
+        print(f"_combat {attacker} -> {defender} enter")
         a_x, a_y = attacker
         d_x, d_y = defender
         attacker_army = self.map[a_y][a_x].army - 1
         defender_army = self.map[d_y][d_x].army
+        print(attacker_army, "vs", defender_army)
         attacking_player = self.map[a_y][a_x].owner
         if attacker_army < defender_army:
             # defender wins
+            print("defender wins")
             self._update_army(defender, -attacker_army)
             self._update_army(attacker, -attacker_army)
         elif attacker_army > defender_army:
             # attacker wins
+            print("attacker wins")
             self.map[a_y][a_x].army = 1
             self._capture_tile(defender, attacking_player, attacker_army)
         else:
             # tie
+            print("tie")
             self._update_army(defender, -defender_army)
             self._update_army(attacker, -attacker_army)
+        print(f"_combat {attacker} -> {defender} leave")
 
     def submit_move(self,
                     username: str,
@@ -255,6 +273,7 @@ class Game:
         :param action: action to perform, one of: "W|A|S|D|E|Q"
         :return: nothing
         """
+        print("submit_move enter")
         player = self._get_player_by_username(username)
         if not player.alive:
             return
@@ -269,6 +288,7 @@ class Game:
         elif action == "Q":
             # cancel all premoves
             player.premoves.clear()
+        print("submit move leave")
 
     def _make_move(self, player: Player) -> None:
         """
@@ -277,6 +297,7 @@ class Game:
         :param player: player to move
         :return: nothing
         """
+        print("_make_move enter")
         if not player.premoves:
             return
         move = player.premoves.popleft()
@@ -308,7 +329,8 @@ class Game:
             adj_tile.army += current_tile.army - 1
             current_tile.army = 1
         else:
-            self._combat((x, y), (x+x_shift, y+y_shift))
+            self._combat((x, y), (x + x_shift, y + y_shift))
+        print("_make_move leave")
 
     def _recruit(self, barracks_only: bool) -> None:
         """
@@ -316,12 +338,30 @@ class Game:
         :param barracks_only: if False, also recruit +1 on owned plain tiles
         :return: nothing
         """
+        print("_recruit enter")
         for x in range(self.width):
             for y in range(self.height):
                 tile = self.map[y][x]
                 if tile.owner:
                     if tile.terrain in ["barracks", "capital"] or not barracks_only:
                         self._update_army((x, y), +1)
+        print("_recruit leave")
+
+    def surrender(self, username: str) -> None:
+        """
+        Surrender the game for the given player and make all their tiles neutral.
+        """
+        print("surrendering")
+        player = self._get_player_by_username(username)
+        player.alive = False
+        player.premoves.clear()
+        player.total_army = 0
+        player.total_land = 0
+        for row in self.map:
+            for tile in row:
+                if tile.owner == player:
+                    tile.owner = None
+        self._check_for_winner()
 
     def tick(self) -> Dict:
         """
@@ -330,6 +370,8 @@ class Game:
         :return: the map for each player as they see it,
                  along with the updated scoreboard
         """
+        if self.winner:
+            raise ValueError("Game already ended.")
         for player in self._get_players_alive():
             self._make_move(player)
         if self.tick_n % 2 == 0 and self.tick_n != 0:
@@ -338,8 +380,6 @@ class Game:
             if self.round_n % 25 == 0:
                 self._recruit(barracks_only=False)
         self.tick_n += 1
-        playersAlive = self._get_players_alive()
-        gameEnded = len(playersAlive) == 1
         return {
             "maps": {
                 player.get_username(): self._get_visible_tiles(player)
@@ -350,6 +390,5 @@ class Game:
                 for player in self.players
             },
             "scoreboard": self._get_scoreboard(),
-            "winner": playersAlive[0].get_username() if gameEnded else None
+            "winner": self.winner
         }
-
