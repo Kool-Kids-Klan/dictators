@@ -283,15 +283,11 @@ class Game:
             return
         adj_tile = self.map[y + y_shift][x + x_shift]
         if adj_tile.owner == player:
-            print("OPTION 1")
             # moving inside own territory
             adj_tile.army += current_tile.army - 1
             current_tile.army = 1
         else:
-            print("OPTION 2")
-            draw_map(self.map)
             self._combat((x, y), (x+x_shift, y+y_shift))
-            draw_map(self.map)
 
     def _recruit(self, barracks_only: bool) -> None:
         """
