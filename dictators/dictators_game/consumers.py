@@ -194,7 +194,10 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         #     self.task = loop.create_task(self.tick(game_map))
 
         if event == 'JOIN_ROOM':
-            await self.join_user_to_lobby(message)
+            if self.room_name not in LOBBIES.keys():
+                await self.disconnect(1000)
+            else:
+                await self.join_user_to_lobby(message)
 
         if event == 'CREATE_ROOM':
             await self.create_lobby(message)
