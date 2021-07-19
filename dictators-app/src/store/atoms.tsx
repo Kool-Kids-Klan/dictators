@@ -63,5 +63,5 @@ export const gameSocketUrlState = atom<string>({
 
 export const connectEventState = atom<string>({
   key: 'connectEvent',
-  default: 'CREATE_ROOM',
+  default: '',
 });

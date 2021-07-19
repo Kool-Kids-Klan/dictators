@@ -35,10 +35,14 @@ export const connect = () => {
   gameSocket.onopen = function open() {
     console.log('WebSockets connection created.', openEvent);
     // on websocket open, send the START event.
-    gameSocket.send(JSON.stringify({
-      event: openEvent,
-      message: username,
-    }));
+    if (openEvent !== '') {
+      gameSocket.send(JSON.stringify({
+        event: openEvent,
+        message: username,
+      }));
+    } else {
+      gameSocket.close(1000);
+    }
   };
 
   gameSocket.onclose = function close(e) {
