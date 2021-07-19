@@ -76,19 +76,18 @@ const Game = () => {
       if (premoves.length < 1) {
         return;
       }
+      pressedKey = 'E';
       setPremoves(premoves.slice(0, -1));
       setSelected(premoves[premoves.length - 1].from);
-      return;
     } else if (e.code === 'KeyQ') {
+      pressedKey = 'Q';
       if (premoves.length > 0) {
         setSelected(premoves[0].from);
       }
       setPremoves([]);
-      return;
     } else {
       return;
     }
-    setPremoves([...premoves, { from: selected, direction }]);
     const data = {
       event: 'MAKE_MOVE',
       message: {
@@ -97,8 +96,11 @@ const Game = () => {
         coor: selected,
       },
     };
-    setSelected(x);
     gameSocket.send(JSON.stringify(data));
+    if (direction !== '') {
+      setPremoves([...premoves, { from: selected, direction }]);
+      setSelected(x);
+    }
   };
 
   return (
