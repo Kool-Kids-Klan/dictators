@@ -3,7 +3,7 @@ import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 import { useHistory } from 'react-router-dom';
 import { currentGameSocket } from '../store/selectors';
 import {
-  appState, gameState, lobbyState, premovesState, scoreState,
+  appState, connectEventState, gameState, lobbyState, premovesState, scoreState,
 } from '../store/atoms';
 import { ILobby, IPlayer } from '../resources/types/types';
 
@@ -30,20 +30,32 @@ export const connect = () => {
   const history = useHistory();
   const [lobby, setLobby] = useRecoilState(lobbyState);
   const [, setPremoves] = useRecoilState(premovesState);
+  const openEvent = useRecoilValue(connectEventState);
+
   gameSocket.onopen = function open() {
-    console.log('WebSockets connection created.');
+    console.log('WebSockets connection created.', openEvent);
     // on websocket open, send the START event.
-    gameSocket.send(JSON.stringify({
-      event: 'JOIN_ROOM',
-      message: username,
-    }));
+    if (openEvent !== '') {
+      gameSocket.send(JSON.stringify({
+        event: openEvent,
+        message: username,
+      }));
+    } else {
+      gameSocket.close(1000);
+    }
   };
 
   gameSocket.onclose = function close(e) {
     console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
-    setTimeout(() => {
-      connect();
-    }, 1000);
+    console.log('this is game socket', gameSocket);
+    // setGameSocket(new WebSocket('ws://localhost:8000/ws/play'));
+    // setTimeout(() => {
+    //   connect();
+    // }, 1000);
+  };
+
+  gameSocket.onerror = function error(e) {
+    console.log('error ocurred');
   };
 
   gameSocket.onmessage = function onMessage(e) {

@@ -8,6 +8,7 @@ from dictators.dictators_game.services.map_generator import CAPITAL_STARTING_ARM
 
 PLAYER_COLORS = ["red", "blue", "green", "purple"]
 MAX_PLAYERS = 4
+LOBBIES = {}
 
 
 class Player:

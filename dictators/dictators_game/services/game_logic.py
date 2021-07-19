@@ -9,6 +9,8 @@ from dictators.dictators_game.services.lobby_service import Player
 # TODO: cleanup, beautify, niekde (x, y) pomenit na Tile?
 # TODO: surrender
 
+GAMES = {}
+
 
 class Game:
     def __init__(self,
