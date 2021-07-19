@@ -138,7 +138,7 @@ class Game:
                     }
                     if tile.army == 0:
                         player_map[y][x].pop("army")
-                elif tile.terrain in ["mountain", "barracks", "capital"]:
+                elif tile.terrain in ["mountain", "barracks"]:
                     player_map[y][x] = {
                         "terrain": "obstacle",
                         "color": "gray"
