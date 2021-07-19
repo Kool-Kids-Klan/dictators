@@ -7,7 +7,6 @@ from channels.db import database_sync_to_async
 from channels.exceptions import StopConsumer
 
 from dictators.dictators_game.services.user_manager import get_user
-from dictators.dictators_game.services.lobby_service import temp_lobby
 from dictators.dictators_game.services.game_logic import Game, GAMES
 from dictators.dictators_game.services.lobby_service import Lobby, LOBBIES
 
@@ -29,8 +28,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             print('ticking')
             self.game = GAMES[self.room_name]
             self.lobby = LOBBIES[self.room_name]
-            game_tick = await sync_to_async(self.game.tick)()
-            # print(game_tick)
+            game_tick = self.game.tick()
 
             for player in self.lobby.get_all_players():
                 player_name = player.user.username
