@@ -85,7 +85,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
     async def create_lobby(self, username):
         user = await self.get_user_db(username)
         self.lobby = Lobby()
-        LOBBIES.append({self.room_name: self.lobby})
+        LOBBIES[self.room_name] = self.lobby
         await self.add_user_to_lobby(user)
 
     async def join_user_to_lobby(self, username):
