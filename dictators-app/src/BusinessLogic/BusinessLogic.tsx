@@ -76,7 +76,22 @@ export const connect = () => {
         console.log('this is thick', message);
         setGame({ game: message.map });
         setScoreBoard(message.scoreboard);
-        setPremoves(message.premoves);
+        setPremoves(message.premoves.map((premove: any) => {
+          let dir = '';
+          if (premove[1] === 'W') {
+            dir = 'up';
+          } else if (premove[1] === 'A') {
+            dir = 'left';
+          } else if (premove[1] === 'S') {
+            dir = 'down';
+          } else if (premove[1] === 'D') {
+            dir = 'right';
+          }
+          return {
+            from: premove[0],
+            direction: dir,
+          };
+        }));
         break;
       case 'JOIN_USER':
         console.log('this are connected users', message);
