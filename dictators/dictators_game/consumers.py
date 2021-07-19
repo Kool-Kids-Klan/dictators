@@ -8,7 +8,7 @@ from channels.exceptions import StopConsumer
 
 from dictators.dictators_game.services.user_manager import get_user
 from dictators.dictators_game.services.lobby_service import temp_lobby
-from dictators.dictators_game.services.game_logic import Game
+from dictators.dictators_game.services.game_logic import Game, GAMES
 from dictators.dictators_game.services.lobby_service import Lobby, LOBBIES
 
 TICK = 1
@@ -52,8 +52,8 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             self.task.cancel()
 
     async def start_game(self):
-        self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 16, 8, 0)
-
+        # self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 16, 8, 0)
+        self.game = GAMES[self.room_name]
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
             'message': '',
@@ -103,7 +103,14 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             'event': 'USER_READY'
         })
         if self.lobby.all_ready():
-            await self.start_game()
+            self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 16, 8, 0)
+            GAMES[self.room_name] = self.game
+            await self.channel_layer.group_send(self.room_group_name, {
+                'type': 'send_start',
+                'message': '',
+                'event': 'start_game',
+            })
+            # await self.start_game()
 
     async def user_not_ready(self, username):
         user = await self.get_user_db(username)
@@ -120,7 +127,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         self.lobby.remove_player(user)
         # lobby is empty, remove lobby
         if not self.lobby.get_all_players():
-            LOBBIES.remove({self.room_name: self.lobby})
+            del LOBBIES[self.room_name]
 
         await self.disconnect(3)
 
@@ -213,6 +220,9 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
         if event == 'MAKE_MOVE':
             await self.make_move(message)
+
+    async def send_start(self, res):
+        await self.start_game()
 
     async def send_message(self, res):
         """ Receive message from room group """
