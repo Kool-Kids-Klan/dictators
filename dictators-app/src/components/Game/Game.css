@@ -124,18 +124,3 @@ table,
     background-image: url("../../resources/images/castle.svg");
 }
 
-.right {
-    background-image: url("../../resources/images/right.png");
-}
-
-.left {
-    background-image: url("../../resources/images/left.png");
-}
-
-.up {
-    background-image: url("../../resources/images/up.png");
-}
-
-.down {
-    background-image: url("../../resources/images/down.png");
-}

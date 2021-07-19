@@ -40,7 +40,7 @@
 
 .navigation__username {
     cursor:default;
-    color: var(--color-primary);
+    color: var(--color-secondary);
 }
 
 .navigation__item:hover {
