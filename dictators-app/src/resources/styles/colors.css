@@ -15,7 +15,8 @@
     --color-tile-selected: white;
     --color-tile-text: white;
 
-    --color-primary: var(--color-dark-blue);
-    --color-secundary: var(--color-light-blue);
+    --color-background: var(--color-dark-blue);
+    --color-primary: var(--color-orange);
+    --color-secondary: var(--color-light-blue);
     --color-font: var(--color-orange);
 }

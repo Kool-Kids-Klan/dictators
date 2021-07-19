@@ -1,4 +1,5 @@
-.Home {
+.Home,
+.confirmation {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -7,7 +8,8 @@
     flex-grow: 1;
 }
 
-.lander__header {
+.lander__header,
+.confirmation__header {
     font-size: 8rem;
 }
 
@@ -16,9 +18,11 @@
     font-size: 2rem;
 }
 
-.lander__info {
+.lander__info,
+.confirmation__info {
     display: block;
     font-size: 1.5rem;
+    color: var(--color-secondary);
 }
 
 .navigation {
@@ -36,15 +40,33 @@
 
 .navigation__username {
     cursor:default;
-    color: var(--color-secundary);
+    color: var(--color-primary);
 }
 
 .navigation__item:hover {
-    color: var(--color-secundary);
+    color: var(--color-secondary);
 }
 
 .navigation__item--home {
     margin-right: auto;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+}
+
+.menu__btn {
+    display: block;
+    background: none;
+    color: var(--color-secondary);
+    font-size: 2rem;
+    border: none;
+}
+
+.menu__btn:hover {
+    color: var(--color-primary);
 }
 
 

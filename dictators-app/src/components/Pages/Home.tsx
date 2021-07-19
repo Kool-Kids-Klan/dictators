@@ -10,7 +10,7 @@ const Home = () => {
     <div className="Home">
       <div className="lander">
         <header className="lander__header">Dictators</header>
-        <span className="lander__moto">Dictators, gather troops, conquer enemy land... be the last one standing!</span>
+        <span className="lander__moto">Gather troops, conquer enemy land... be the last one standing!</span>
         {!authenticated && <span className="lander__info">Please login or register</span>}
       </div>
       {authenticated && <MainMenu />}

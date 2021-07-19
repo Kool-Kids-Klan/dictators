@@ -5,8 +5,8 @@
   height: 100vh;
   width: 100vw;
 
-  background-color: var(--color-primary);
+  background-color: var(--color-background);
 
   font-family: 'Odibee Sans', cursive;
-  color: var(--color-font);
+  color: var(--color-primary);
 }
