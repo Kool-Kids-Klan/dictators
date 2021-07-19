@@ -29,6 +29,7 @@ export const connect = () => {
   const [, setScoreBoard] = useRecoilState(scoreState);
   const history = useHistory();
   const [lobby, setLobby] = useRecoilState(lobbyState);
+  console.log('this is gamesocket', gameSocket);
   gameSocket.onopen = function open() {
     console.log('WebSockets connection created.');
     // on websocket open, send the START event.
@@ -40,9 +41,15 @@ export const connect = () => {
 
   gameSocket.onclose = function close(e) {
     console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
-    setTimeout(() => {
-      connect();
-    }, 1000);
+    console.log('this is game socket', gameSocket);
+    // setGameSocket(new WebSocket('ws://localhost:8000/ws/play'));
+    // setTimeout(() => {
+    //   connect();
+    // }, 1000);
+  };
+
+  gameSocket.onerror = function error(e) {
+    console.log('error ocurred');
   };
 
   gameSocket.onmessage = function onMessage(e) {

@@ -2,6 +2,7 @@ import { atom } from 'recoil';
 import {
   IApp, IGame, ILobby, IPremove, IScore,
 } from '../resources/types/types';
+import { makeId } from '../utils/utils';
 
 export const appState = atom<IApp>({
   key: 'auth',
@@ -50,4 +51,12 @@ export const scoreState = atom<IScore[]>({
   }, {
     username: 'Filo', land: 79, army: 42, color: 'purple',
   }],
+});
+
+const webSocketUrl = 'localhost:8000';
+const connectionString = `ws://${webSocketUrl}/ws/play/`;
+
+export const gameSocketUrlState = atom<string>({
+  key: 'gameSocketUrlState',
+  default: `${connectionString}${makeId(5)}/`,
 });
