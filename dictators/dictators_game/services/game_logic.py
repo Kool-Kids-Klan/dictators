@@ -324,6 +324,10 @@ class Game:
                 player.get_username(): self._get_visible_tiles(player)
                 for player in self.players
             },
+            "premoves": {
+                player.get_username(): list(player.premoves)
+                for player in self.players
+            },
             "scoreboard": self._get_scoreboard(),
             "winner": playersAlive[0].get_username() if gameEnded else None
         }
