@@ -9,6 +9,8 @@ from dictators.dictators_game.services.lobby_service import Player
 # TODO: cleanup, beautify, niekde (x, y) pomenit na Tile?
 # TODO: surrender
 
+GAMES = {}
+
 
 class Game:
     def __init__(self,
@@ -132,6 +134,8 @@ class Game:
                         "color": tile.owner.color if tile.owner else "white",
                         "army": tile.army
                     }
+                    if tile.army == 0:
+                        player_map[y][x].pop("army")
                 elif tile.terrain in ["mountain", "barracks", "capital"]:
                     player_map[y][x] = {
                         "terrain": "obstacle",
@@ -253,7 +257,7 @@ class Game:
         if action in "WASD":
             # W=up  A=left  S=down  D=right
             player.premoves.append((from_tile, action))
-        elif action == "E":
+        elif action == "E" and player.premoves:
             # cancel last premove
             player.premoves.pop()
         elif action == "Q":

@@ -4,10 +4,12 @@ import asyncio
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
+from channels.exceptions import StopConsumer
 
 from dictators.dictators_game.services.user_manager import get_user
 from dictators.dictators_game.services.lobby_service import temp_lobby
-from dictators.dictators_game.services.game_logic import Game
+from dictators.dictators_game.services.game_logic import Game, GAMES
+from dictators.dictators_game.services.lobby_service import Lobby, LOBBIES
 
 TICK = 0.5
 
@@ -18,7 +20,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         self.room_name = ''
         self.room_group_name = ''
         self.task = None
-        self.lobby = temp_lobby
+        self.lobby = None
         self.game = None
         self.game_map = None
 
@@ -50,12 +52,8 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             self.task.cancel()
 
     async def start_game(self):
-        self.game = await sync_to_async(Game)(players=self.lobby.get_all_players(),
-                                              width=30,
-                                              height=16,
-                                              n_barracks=16,
-                                              n_mountains=32)
-
+        # self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 16, 8, 0)
+        self.game = GAMES[self.room_name]
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
             'message': '',
@@ -69,10 +67,10 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
     def get_user_db(self, username):
         return get_user(username)
 
-    async def add_user_to_lobby(self, username):
-        user = await self.get_user_db(username)
+    async def add_user_to_lobby(self, user):
         self.lobby.add_player(user)
         player_dict = [player.as_json() for player in self.lobby.get_all_players()]
+        print('this are players that are joined in one lobby', player_dict)
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
             'message': {'players': player_dict, 'id': self.room_name},
@@ -84,6 +82,17 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             self.channel_name
         )
 
+    async def create_lobby(self, username):
+        user = await self.get_user_db(username)
+        self.lobby = Lobby()
+        LOBBIES[self.room_name] = self.lobby
+        await self.add_user_to_lobby(user)
+
+    async def join_user_to_lobby(self, username):
+        user = await self.get_user_db(username)
+        self.lobby = LOBBIES[self.room_name]
+        await self.add_user_to_lobby(user)
+
     async def user_get_ready(self, username):
         user = await self.get_user_db(username)
         player = self.lobby.get_player(user)
@@ -94,7 +103,14 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             'event': 'USER_READY'
         })
         if self.lobby.all_ready():
-            await self.start_game()
+            self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 30, 16, 8, 0)
+            GAMES[self.room_name] = self.game
+            await self.channel_layer.group_send(self.room_group_name, {
+                'type': 'send_start',
+                'message': '',
+                'event': 'start_game',
+            })
+            # await self.start_game()
 
     async def user_not_ready(self, username):
         user = await self.get_user_db(username)
@@ -105,6 +121,15 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             'message': player.as_json(),
             'event': 'USER_NOT_READY'
         })
+
+    async def user_exit_lobby(self, username):
+        user = await self.get_user_db(username)
+        self.lobby.remove_player(user)
+        # lobby is empty, remove lobby
+        if not self.lobby.get_all_players():
+            del LOBBIES[self.room_name]
+
+        await self.disconnect(3)
 
     async def make_move(self, message):
         action = message['key']
@@ -124,6 +149,8 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
+        # self.lobby = Lobby()
+        # LOBBIES.append({self.room_name: self.lobby})
 
     async def disconnect(self, close_code):
         print("Disconnected")
@@ -133,6 +160,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+        await self.close(1000)
 
     async def receive(self, text_data):
         """
@@ -166,14 +194,20 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                 'event': "END"
             })
 
-        if event == 'START_GAME':
-            await self.start_game()
-            game_map = []
-            loop = asyncio.get_event_loop()
-            self.task = loop.create_task(self.tick(game_map))
+        # if event == 'START_GAME':
+        #     await self.start_game()
+        #     game_map = []
+        #     loop = asyncio.get_event_loop()
+        #     self.task = loop.create_task(self.tick(game_map))
 
         if event == 'JOIN_ROOM':
-            await self.add_user_to_lobby(message)
+            if self.room_name not in LOBBIES.keys():
+                await self.disconnect(1000)
+            else:
+                await self.join_user_to_lobby(message)
+
+        if event == 'CREATE_ROOM':
+            await self.create_lobby(message)
 
         if event == 'GET_READY':
             await self.user_get_ready(message)
@@ -181,8 +215,14 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         if event == 'NOT_READY':
             await self.user_not_ready(message)
 
+        if event == 'EXIT_LOBBY':
+            await self.user_exit_lobby(message)
+
         if event == 'MAKE_MOVE':
             await self.make_move(message)
+
+    async def send_start(self, res):
+        await self.start_game()
 
     async def send_message(self, res):
         """ Receive message from room group """

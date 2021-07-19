@@ -9,21 +9,29 @@ import {
 } from '../../store/atoms';
 import { Coor } from '../../resources/types/types';
 import { currentGameSocket } from '../../store/selectors';
+import GameMenu from './GameMenu';
 
 const Game = () => {
   const { game } = useRecoilValue(gameState);
   const [premoves, setPremoves] = useRecoilState(premovesState);
-  const [scores, setScores] = useRecoilState(scoreState);
+  const scores = useRecoilValue(scoreState);
   const { username } = useRecoilValue(appState);
   const gameSocket = useRecoilValue(currentGameSocket);
   // TODO delete default value / set to base Coor from backend
   const [selected, setSelected]: [Coor, SetterOrUpdater<Coor>] = useState([-1, -1]);
+  const [menu, setMenu] = useState(false);
 
   const board = game.map((row, y) => {
     const squares = row.map((square, x) => {
       const coords: Coor = [y, x];
       const selectClass = (coords[0] === selected[0] && coords[1] === selected[1]) ? 'selected' : '';
-      const selectSquare = () => setSelected(coords);
+      const selectSquare = () => {
+        if (square.color === scores.find((s) => s.username === username)?.color) {
+          setSelected(coords);
+        } else {
+          setSelected([-1, -1]);
+        }
+      };
       // TODO overwrites terrain in CSS
       const directions: Set<string> = new Set();
       premoves.forEach((premove) => {
@@ -86,6 +94,9 @@ const Game = () => {
         setSelected(premoves[0].from);
       }
       setPremoves([]);
+    } else if (e.code === 'Escape') {
+      setMenu(!menu);
+      return;
     } else {
       return;
     }
@@ -104,8 +115,13 @@ const Game = () => {
     }
   };
 
+  const gameMenu = (menu) ? (
+    <GameMenu />
+  ) : <></>;
+
   return (
     <div className="game container-fluid">
+      {gameMenu}
       <Draggable bounds="parent">
         <table className="game__table">
           <tbody>

@@ -6,6 +6,9 @@ td {
 .game {
     position: relative;
     flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 table,
@@ -35,6 +38,21 @@ table,
 
 .game__tile:hover {
     opacity: 0.7;
+}
+
+.game__menu {
+    position: absolute;
+    z-index: 1;
+}
+
+.secret {
+    height: 10px;
+    width: 10px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-image: url("../../resources/images/dano.png");
 }
 
 .score {
