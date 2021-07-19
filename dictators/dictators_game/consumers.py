@@ -28,7 +28,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         while True:
             print('ticking')
             game_tick = await sync_to_async(self.game.tick)()
-            print(game_tick)
+            # print(game_tick)
 
             for player in self.lobby.get_all_players():
                 player_name = player.user.username
