@@ -1,0 +1,94 @@
+.Home,
+.confirmation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.lander__header,
+.confirmation__header {
+    font-size: 8rem;
+}
+
+.lander__moto {
+    display: block;
+    font-size: 2rem;
+}
+
+.lander__info,
+.confirmation__info {
+    display: block;
+    font-size: 1.5rem;
+    color: var(--color-secondary);
+}
+
+.navigation {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.navigation__item,
+.navigation__username {
+    cursor: pointer;
+    font-size: 2rem;
+    list-style: none;
+    margin-right: 2rem;
+}
+
+.navigation__username {
+    cursor:default;
+    color: var(--color-primary);
+}
+
+.navigation__item:hover {
+    color: var(--color-secondary);
+}
+
+.navigation__item--home {
+    margin-right: auto;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+}
+
+.menu__btn {
+    display: block;
+    background: none;
+    color: var(--color-secondary);
+    font-size: 2rem;
+    border: none;
+}
+
+.menu__btn:hover {
+    color: var(--color-primary);
+}
+
+.login__error-msg {
+    display: block;
+    padding: 1rem;
+    color: var(--color-error);
+    font-size: 1.5rem;
+}
+
+.form__label,
+.form__input,
+.LoaderButton,
+.login__error-msg {
+    font-size: 1.5rem;
+}
+
+.form__input {
+    background-color: var(--color-secondary);
+}
+
+.LoaderButton {
+    border: none;
+    color: var(--color-passive);
+    background-color: var(--color-primary);
+}

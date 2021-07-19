@@ -11,6 +11,7 @@ import { AUTH_USER_URL, reqOptions } from '../../../utils/endpoints';
 const Login = () => {
   const history = useHistory();
 
+  const [loginError, setLoginError] = useState([false, '']);
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -28,7 +29,7 @@ const Login = () => {
     };
     return fetch(AUTH_USER_URL, reqOptions(body))
       .then((res) => res)
-      .catch((error) => alert(error));
+      .catch((error) => setLoginError([true, error]));
   };
 
   async function handleSubmit(event: FormEvent) {
@@ -39,7 +40,8 @@ const Login = () => {
       const res = await authenticate();
       if (!res) return;
       if (res.status !== 200) {
-        alert((await res.json()).error);
+        const { error } = await res.json();
+        setLoginError([true, error]);
         return;
       }
       setAppState({ authenticated: true, username });
@@ -55,8 +57,9 @@ const Login = () => {
     <div className="Login">
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="username">
-          <Form.Label>Username</Form.Label>
+          <Form.Label className="form__label">Username</Form.Label>
           <Form.Control
+            className="form__input"
             autoFocus
             type="username"
             value={username}
@@ -64,8 +67,9 @@ const Login = () => {
           />
         </Form.Group>
         <Form.Group controlId="password">
-          <Form.Label>Password</Form.Label>
+          <Form.Label className="form__label">Password</Form.Label>
           <Form.Control
+            className="form__input"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -74,6 +78,7 @@ const Login = () => {
         <LoaderButton block type="submit" isLoading={isLoading} disabled={!validateForm()}>
           Login
         </LoaderButton>
+        {loginError[0] && <span className="login__error-msg">{loginError[1]}</span>}
       </Form>
     </div>
   );

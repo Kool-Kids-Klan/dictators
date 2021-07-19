@@ -9,6 +9,7 @@ import { CREATE_USER_URL, reqOptions } from '../../../utils/endpoints';
 const Register = () => {
   const history = useHistory();
 
+  const [loginError, setLoginError] = useState([false, '']);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -27,7 +28,7 @@ const Register = () => {
     };
     return fetch(CREATE_USER_URL, reqOptions(body))
       .then((res) => res)
-      .catch((error) => alert(error));
+      .catch((error) => setLoginError([true, error]));
   };
 
   async function handleSubmit(event: FormEvent) {
@@ -38,7 +39,8 @@ const Register = () => {
       const res = await registerUser();
       if (!res) return;
       if (res.status !== 204) {
-        alert((await res.json()).error);
+        const { error } = await res.json();
+        setLoginError([true, error]);
         return;
       }
 
@@ -52,8 +54,9 @@ const Register = () => {
     <div className="Register Login">
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="username">
-          <Form.Label>Username</Form.Label>
+          <Form.Label className="form__label">Username</Form.Label>
           <Form.Control
+            className="form__input"
             autoFocus
             type="username"
             value={username}
@@ -61,16 +64,18 @@ const Register = () => {
           />
         </Form.Group>
         <Form.Group controlId="email">
-          <Form.Label>Email</Form.Label>
+          <Form.Label className="form__label">Email</Form.Label>
           <Form.Control
+            className="form__input"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </Form.Group>
         <Form.Group controlId="password">
-          <Form.Label>Password</Form.Label>
+          <Form.Label className="form__label">Password</Form.Label>
           <Form.Control
+            className="form__input"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -79,6 +84,7 @@ const Register = () => {
         <LoaderButton block type="submit" isLoading={isLoading} disabled={!validateForm()}>
           Sign up
         </LoaderButton>
+        {loginError[0] && <span className="login__error-msg">{loginError[1]}</span>}
       </Form>
     </div>
   );

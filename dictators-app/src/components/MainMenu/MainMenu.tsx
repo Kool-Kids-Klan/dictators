@@ -30,12 +30,12 @@ const MainMenu = () => {
         onChange={(e) => setLobbyId(e.target.value)}
       />
       <LinkContainer to="/lobby">
-        <button type="button" onClick={() => connectSocket('JOIN_ROOM', `${connectionString}${lobbyId}/`)}>Join Lobby</button>
+        <button className="menu__btn" type="button" onClick={() => connectSocket('JOIN_ROOM', `${connectionString}${lobbyId}/`)}>Join Lobby</button>
       </LinkContainer>
       <LinkContainer to="/lobby">
-        <button type="button" onClick={() => connectSocket('CREATE_ROOM', '')}>Create Lobby</button>
+        <button className="menu__btn" type="button" onClick={() => connectSocket('CREATE_ROOM', '')}>Create Lobby</button>
       </LinkContainer>
-      <button type="button">Leaderboards</button>
+      <button className="menu__btn" type="button">Leaderboards</button>
     </div>
   );
 };

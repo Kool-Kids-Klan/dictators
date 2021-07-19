@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Game.css';
 import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
+import Draggable from 'react-draggable';
 import Tile from './Tile';
 import Score from './Score';
 import {
@@ -121,11 +122,13 @@ const Game = () => {
   return (
     <div className="game container-fluid">
       {gameMenu}
-      <table className="game__table">
-        <tbody>
-          {board}
-        </tbody>
-      </table>
+      <Draggable bounds="parent">
+        <table className="game__table">
+          <tbody>
+            {board}
+          </tbody>
+        </table>
+      </Draggable>
       <Score scores={scores} />
     </div>
   );

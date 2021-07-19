@@ -1,8 +1,9 @@
 import React from 'react';
-import './App.css';
-import { useRecoilState } from 'recoil';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { MyNavbar as Navbar } from './components/Nav/MyNavbar';
+import './resources/styles/App.css';
+import './resources/styles/Pages.css';
+import { useRecoilState } from 'recoil';
+import { Navbar } from './components/Nav/Navbar';
 import Routes from './Routes';
 import { appState } from './store/atoms';
 
@@ -15,7 +16,6 @@ function App() {
     r[trimmedA] = b;
     return { key: a, value: b };
   });
-  console.log('this is cookies r', r);
   if (!authenticated && r.username) {
     setApp({ authenticated: true, username: r.username });
   }

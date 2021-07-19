@@ -13,9 +13,9 @@ const Confirmation = () => {
   });
 
   return (
-    <div>
-      <h1>Operation Successful</h1>
-      <p>You will be redirected shortly</p>
+    <div className="confirmation">
+      <header className="confirmation__header">Operation Successful</header>
+      <span className="confirmation__info">You will be redirected shortly...</span>
     </div>
   );
 };
