@@ -13,11 +13,14 @@ from dictators.dictators_game.services.lobby_service import Player
 class Game:
     def __init__(self,
                  players: List[Player],
-                 map_size: int,
+                 width: int,
+                 height: int,
                  n_barracks: int,
                  n_mountains: int):
         self.players = players
-        self.map = generate_map(map_size, len(players), n_barracks, n_mountains)
+        self.width = width
+        self.height = height
+        self.map = generate_map(width, height, len(players), n_barracks, n_mountains)
         self._assign_capitals()
         self.round_n = 1
         self.tick_n = 0
@@ -45,8 +48,8 @@ class Game:
         To be called before the game actually starts (before first tick).
         :return: nothing
         """
-        capitals = [(x, y) for x in range(len(self.map[0]))
-                    for y in range(len(self.map))
+        capitals = [(x, y) for x in range(self.width)
+                    for y in range(self.height)
                     if self.map[y][x].terrain == "capital"]
         random.shuffle(capitals)
         for i in range(len(self.players)):
@@ -59,7 +62,7 @@ class Game:
         """
         :return: True if given coordinates are valid, else False
         """
-        return 0 <= x < len(self.map[0]) and 0 <= y < len(self.map)
+        return 0 <= x < self.width and 0 <= y < self.height
 
     def _tile_neighbors_with_player(self,
                                     tile: Tuple[int, int],
@@ -118,10 +121,10 @@ class Game:
         """
         :return: the map for the given player exactly like he sees it.
         """
-        player_map = [[{} for _ in range(len(self.map[0]))]
-                      for _ in range(len(self.map))]
-        for y in range(len(player_map)):
-            for x in range(len(player_map[0])):
+        player_map = [[{} for _ in range(self.width)]
+                      for _ in range(self.height)]
+        for y in range(self.height):
+            for x in range(self.width):
                 tile = self.map[y][x]
                 if player in tile.discoveredBy or not player.alive:
                     player_map[y][x] = {
@@ -316,8 +319,8 @@ class Game:
         :param barracks_only: if False, also recruit +1 on owned plain tiles
         :return: nothing
         """
-        for x in range(len(self.map[0])):
-            for y in range(len(self.map)):
+        for x in range(self.width):
+            for y in range(self.height):
                 tile = self.map[y][x]
                 if tile.owner:
                     if tile.terrain in ["barracks", "capital"] or not barracks_only:
