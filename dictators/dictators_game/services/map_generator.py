@@ -8,7 +8,7 @@ from typing import List, Set, Tuple, NewType
 # forest tile? nema vision na susedne tiles, nevidiet co je v nom ak ho nekontrolujem (OP?)
 
 
-PLAIN_STARTING_ARMY = 1
+PLAIN_STARTING_ARMY = 0
 BARRACKS_STARTING_ARMY = 50
 CAPITAL_STARTING_ARMY = 1
 
@@ -18,7 +18,7 @@ class Tile:
         self.terrain = terrain
         self.army = army
         self.owner = None
-        self.discoveredBy = []
+        self.discoveredBy = set()
 
 
 MAP_T = NewType("MAP_T", List[List[Tile]])
@@ -104,8 +104,8 @@ def generate_map(size: int,
     """
 
     # Verify parameters
-    if n_players < 1 or n_players > 4:  # TODO later change to 2-4
-        raise ValueError("Only 1-4 players are allowed.")
+    if n_players < 2 or n_players > 4:
+        raise ValueError("Only 2-4 players are allowed.")
     if size % 2 != 0:
         raise ValueError("Map size must be even.")
     if n_barracks == 0 or n_barracks % 4 != 0:

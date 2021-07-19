@@ -107,6 +107,10 @@ table,
     background-color: var(--color-player-purple);
 }
 
+.white {
+    background-color: var(--color-player-white);
+}
+
 .barracks {
     background-image: url("../../resources/images/barrack.svg");
 }

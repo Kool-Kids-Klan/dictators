@@ -11,6 +11,8 @@ from dictators.dictators_game.services.lobby_service import temp_lobby
 from dictators.dictators_game.services.game_logic import Game
 from dictators.dictators_game.services.lobby_service import Lobby, LOBBIES
 
+TICK = 5
+
 
 class DictatorsConsumer(AsyncJsonWebsocketConsumer):
     def __init__(self):
@@ -24,7 +26,9 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
     async def tick(self):
         while True:
+            print('ticking')
             game_tick = await sync_to_async(self.game.tick)()
+            print(game_tick)
 
             for player in self.lobby.get_all_players():
                 player_name = player.user.username
@@ -32,13 +36,15 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                     'type': 'send_message',
                     'message': {
                         'map': game_tick['maps'][player_name],
-                        'scoreboard': game_tick['scoreboard']
+                        'scoreboard': game_tick['scoreboard'],
+                        'winner': game_tick['winner'],
+                        'premoves': game_tick['premoves'][player_name]
                     },
                     'event': 'TICK'
                 })
 
             print('tick is happening')
-            await asyncio.sleep(5)
+            await asyncio.sleep(TICK)
 
     def stop_tick(self):
         print('stopping tick')
@@ -107,6 +113,12 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             LOBBIES.remove({self.room_name: self.lobby})
 
         await self.disconnect(3)
+
+    async def make_move(self, message):
+        action = message['key']
+        username = message['username']
+        from_tile = (message['coor'][1], message['coor'][0])
+        self.game.submit_move(username, from_tile, action)
 
     async def connect(self):
         print('User is trying to connect to room')
@@ -182,6 +194,9 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
         if event == 'EXIT_LOBBY':
             await self.user_exit_lobby(message)
+
+        if event == 'MAKE_MOVE':
+            await self.make_move(message)
 
     async def send_message(self, res):
         """ Receive message from room group """

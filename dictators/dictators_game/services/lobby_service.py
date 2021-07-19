@@ -1,5 +1,6 @@
-from typing import List
 import random
+from typing import List
+from collections import deque
 
 from dictators.dictators_game.models import User
 from dictators.dictators_game.services.map_generator import CAPITAL_STARTING_ARMY
@@ -19,7 +20,7 @@ class Player:
         self.alive = True
         self.total_army = CAPITAL_STARTING_ARMY
         self.total_land = 1
-        self.premoves = []
+        self.premoves = deque()
 
     def as_json(self):
         return {
