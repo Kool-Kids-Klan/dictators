@@ -4,9 +4,7 @@ import { useRecoilState } from 'recoil';
 import Form from 'react-bootstrap/Form';
 import { connectEventState, gameSocketUrlState } from '../../store/atoms';
 import { makeId } from '../../utils/utils';
-
-const webSocketUrl = `${window.location.hostname}:8000`;
-const connectionString = `ws://${webSocketUrl}/ws/play/`;
+import { connectionString } from '../../store/selectors';
 
 const MainMenu = () => {
   const [, setGameSocketUrl] = useRecoilState(gameSocketUrlState);
@@ -14,9 +12,7 @@ const MainMenu = () => {
   const [lobbyId, setLobbyId] = useState('');
 
   const connectSocket = (event: string, url: string) => {
-    if (event === 'JOIN_ROOM') {
-      setGameSocketUrl(url);
-    }
+    setGameSocketUrl(url);
     setConnectEvent(event);
   };
 
@@ -34,7 +30,7 @@ const MainMenu = () => {
         <button className="menu__btn" type="button" onClick={() => connectSocket('JOIN_ROOM', `${connectionString}${lobbyId}/`)}>Join Lobby</button>
       </LinkContainer>
       <LinkContainer to="/lobby">
-        <button className="menu__btn" type="button" onClick={() => connectSocket('CREATE_ROOM', '')}>Create Lobby</button>
+        <button className="menu__btn" type="button" onClick={() => connectSocket('CREATE_ROOM', `${connectionString}${makeId(5)}/`)}>Create Lobby</button>
       </LinkContainer>
       <button className="menu__btn" type="button">Leaderboards</button>
     </div>
