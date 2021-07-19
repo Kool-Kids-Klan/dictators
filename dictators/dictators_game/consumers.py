@@ -9,6 +9,7 @@ from channels.exceptions import StopConsumer
 from dictators.dictators_game.services.user_manager import get_user
 from dictators.dictators_game.services.game_logic import Game, GAMES
 from dictators.dictators_game.services.lobby_service import Lobby, LOBBIES
+from dictators.dictators_game import models
 
 TICK = 0.5
 
@@ -161,7 +162,12 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         user = await self.get_user_db(username)
         self.lobby.remove_player(user)
 
-        self.channel_layer.group_send(self.room_group_name, {
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
             'message': {
                 'players': [player.as_json() for player in self.lobby.get_all_players()],
@@ -170,7 +176,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             'event': 'EXIT_USER',
         })
 
-        await self.disconnect(3)
+        await self.disconnect(1000)
 
     async def make_move(self, message):
         action = message['key']
