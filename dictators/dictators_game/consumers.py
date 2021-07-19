@@ -105,7 +105,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
     async def make_move(self, message):
         action = message['key']
         username = message['username']
-        from_tile = (message['coor'][0], message['coor'][1])
+        from_tile = (message['coor'][1], message['coor'][0])
         self.game.submit_move(username, from_tile, action)
 
     async def connect(self):
