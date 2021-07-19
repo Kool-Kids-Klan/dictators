@@ -179,7 +179,8 @@ class Game:
         :param army: amount of army of the new owner on the tile
         """
         # print(f"CAPTURING TILE {tile} WITH REMAINING ARMY {army}")
-        captured_tile = self.map[tile[1]][tile[0]]
+        x, y = tile
+        captured_tile = self.map[y][x]
         old_owner = captured_tile.owner
         # print("old owner:", old_owner)
 
@@ -196,9 +197,8 @@ class Game:
             old_owner.alive = False
             old_owner.total_army = 0
             old_owner.total_land = 0
-            for x in range(len(self.map[0])):
-                for y in range(len(self.map)):
-                    current_tile = self.map[y][x]
+            for row in self.map:
+                for current_tile in row:
                     if current_tile.owner == old_owner:
                         current_tile.owner = player
                         current_tile.terrain = "barracks"
@@ -229,7 +229,8 @@ class Game:
         elif attacker_army > defender_army:
             # print("ATTACKER WINS")
             # attacker wins
-            self._update_army(attacker, -attacker_army)
+            self.map[a_y][a_x].army = 1
+            attacking_player.total_army -= defender_army
             # print("army should be updated now")
             self._capture_tile(defender, attacking_player,
                                attacker_army-defender_army)
