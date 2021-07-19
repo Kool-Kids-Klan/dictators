@@ -8,7 +8,7 @@ from typing import List, Set, Tuple, NewType
 # forest tile? nema vision na susedne tiles, nevidiet co je v nom ak ho nekontrolujem (OP?)
 
 
-PLAIN_STARTING_ARMY = 1
+PLAIN_STARTING_ARMY = 0
 BARRACKS_STARTING_ARMY = 50
 CAPITAL_STARTING_ARMY = 1
 
@@ -18,7 +18,7 @@ class Tile:
         self.terrain = terrain
         self.army = army
         self.owner = None
-        self.discoveredBy = []
+        self.discoveredBy = set()
 
 
 MAP_T = NewType("MAP_T", List[List[Tile]])
@@ -34,16 +34,18 @@ def _dist(tile1, tile2):
 
 
 def _check_capitals_distance(capitals: List[Tuple[int, int]],
-                             size: int) -> bool:
+                             width: int,
+                             height: int) -> bool:
     """
     Check if capitals are far enough from each other (half of the size) by air distance.
     :param capitals: positions of the capitals
-    :param size: length of the edge of the map
+    :param width: width of the map
+    :param height: height of the map
     :return: True if capitals are positioned appropriately, False otherwise
     """
     for i in range(len(capitals)):
         for j in range(i+1, len(capitals)):
-            if _dist(capitals[i], capitals[j]) < size/2:
+            if _dist(capitals[i], capitals[j]) < (width+height)/4:
                 return False
     return True
 
@@ -90,13 +92,15 @@ def _check_capitals_accessibility(M: MAP_T,
     return connected_capitals == set(capitals)
 
 
-def generate_map(size: int,
+def generate_map(width: int,
+                 height: int,
                  n_players: int,
                  n_barracks: int,
                  n_mountains: int) -> MAP_T:
     """
     Generate random map with respect to the provided parameters.
-    :param size: length of the edge of the map
+    :param width: width of the mao
+    :param height: height of the map
     :param n_players: number of players in the game
     :param n_barracks: number of barracks on the map
     :param n_mountains: number of mountain tiles on the map
@@ -106,44 +110,44 @@ def generate_map(size: int,
     # Verify parameters
     if n_players < 1 or n_players > 4:  # TODO later change to 2-4
         raise ValueError("Only 1-4 players are allowed.")
-    if size % 2 != 0:
-        raise ValueError("Map size must be even.")
+    if width % 2 != 0 or height % 2 != 0:
+        raise ValueError("Width and height of the map must be even.")
     if n_barracks == 0 or n_barracks % 4 != 0:
         raise ValueError("Number of barracks must be non-zero and divisible by 4.")
     if n_mountains % 4 != 0:
         raise ValueError("Number of mountains must be divisible by 4.")
 
     M = MAP_T([[Tile(terrain="plain", army=PLAIN_STARTING_ARMY)
-                for _ in range(size)] for _ in range(size)])
+                for _ in range(width)] for _ in range(height)])
     quadrants = [[] for _ in range(4)]  # [TL, TR, BL, BR]
-    for y in range(size):
-        for x in range(size):
-            if y < size/2:
-                if x < size/2:
+    for y in range(height):
+        for x in range(width):
+            if y < height/2:
+                if x < width/2:
                     quadrants[0].append((x, y))
                 else:
                     quadrants[1].append((x, y))
             else:
-                if x < size/2:
+                if x < width/2:
                     quadrants[2].append((x, y))
                 else:
                     quadrants[3].append((x, y))
 
-    barracks = [[] for _ in range(len(quadrants))]
+    barracks = [[] for _ in range(4)]
     while True:
         # Generate barracks
-        for i in range(len(quadrants)):
+        for i in range(4):
             q = quadrants[i]
             barracks[i] = random.sample(q, n_barracks // 4)
 
         # Promote random barracks to capital for each player
         populated_quadrants = random.sample(range(4), n_players)
         capitals = []
-        for i in range(len(quadrants)):
+        for i in range(4):
             if i in populated_quadrants:
                 capitals.append(random.choice(barracks[i]))
-        if _check_capitals_distance(capitals, size):
-            for i in range(len(quadrants)):
+        if _check_capitals_distance(capitals, width, height):
+            for i in range(4):
                 quadrants[i] = list(set(quadrants[i]) - set(barracks[i]))
                 for (x, y) in barracks[i]:
                     if (x, y) in capitals:
@@ -189,6 +193,5 @@ def draw_map(M: MAP_T) -> None:
     print("===========================")
 
 
-# sample_map = generate_map(16, 4, 8, 100)
+# sample_map = generate_map(32, 4, 4, 4, 16)
 # draw_map(sample_map)
-

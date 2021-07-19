@@ -3,7 +3,7 @@ import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 import { useHistory } from 'react-router-dom';
 import { currentGameSocket } from '../store/selectors';
 import {
-  appState, gameState, lobbyState, scoreState,
+  appState, gameState, lobbyState, premovesState, scoreState,
 } from '../store/atoms';
 import { ILobby, IPlayer } from '../resources/types/types';
 
@@ -29,6 +29,7 @@ export const connect = () => {
   const [, setScoreBoard] = useRecoilState(scoreState);
   const history = useHistory();
   const [lobby, setLobby] = useRecoilState(lobbyState);
+  const [, setPremoves] = useRecoilState(premovesState);
   gameSocket.onopen = function open() {
     console.log('WebSockets connection created.');
     // on websocket open, send the START event.
@@ -75,6 +76,22 @@ export const connect = () => {
         console.log('this is thick', message);
         setGame({ game: message.map });
         setScoreBoard(message.scoreboard);
+        setPremoves(message.premoves.map((premove: any) => {
+          let dir = '';
+          if (premove[1] === 'W') {
+            dir = 'up';
+          } else if (premove[1] === 'A') {
+            dir = 'left';
+          } else if (premove[1] === 'S') {
+            dir = 'down';
+          } else if (premove[1] === 'D') {
+            dir = 'right';
+          }
+          return {
+            from: [premove[0][1], premove[0][0]],
+            direction: dir,
+          };
+        }));
         break;
       case 'JOIN_USER':
         console.log('this are connected users', message);

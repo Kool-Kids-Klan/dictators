@@ -10,7 +10,7 @@ export const currentGameSocket = selector({
   key: 'gameSocket',
   get: () => {
     if (!socket) {
-      socket = new WebSocket(`${connectionString}${makeId(5)}/`);
+      socket = new WebSocket(`${connectionString}room/`);
     }
     return socket;
   },
