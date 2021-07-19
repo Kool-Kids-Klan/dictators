@@ -18,11 +18,11 @@ const NavItems = () => {
 
   return (
     <>
-      {!authenticated && (
+      {/* {!authenticated && ( */}
       <LinkContainer to="/">
         <li className="navigation__item navigation__item--home">Home</li>
       </LinkContainer>
-      )}
+      {/* )} */}
       {authenticated && <li className="navigation__username">{username}</li>}
       {authenticated ? (
         <li className="navigation__item" onClick={handleLogout}>Logout</li>
