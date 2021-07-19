@@ -104,7 +104,7 @@ def generate_map(size: int,
     """
 
     # Verify parameters
-    if n_players < 2 or n_players > 4:
+    if n_players < 1 or n_players > 4:
         raise ValueError("Only 2-4 players are allowed.")
     if size % 2 != 0:
         raise ValueError("Map size must be even.")

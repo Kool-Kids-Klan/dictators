@@ -11,7 +11,7 @@ from dictators.dictators_game.services.lobby_service import temp_lobby
 from dictators.dictators_game.services.game_logic import Game
 from dictators.dictators_game.services.lobby_service import Lobby, LOBBIES
 
-TICK = 5
+TICK = 1
 
 
 class DictatorsConsumer(AsyncJsonWebsocketConsumer):
