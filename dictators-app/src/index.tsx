@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import { BrowserRouter as Router } from 'react-router-dom';
+import './resources/styles/index.css';
 import { RecoilRoot } from 'recoil';
 import App from './App';
 

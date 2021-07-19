@@ -5,6 +5,7 @@ td {
 
 .game {
     position: relative;
+    flex-grow: 1;
 }
 
 table,

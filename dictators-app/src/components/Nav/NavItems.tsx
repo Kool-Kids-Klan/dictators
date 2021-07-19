@@ -1,7 +1,7 @@
 import { useHistory } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
+import Link from 'react-bootstrap/Nav';
 import { LinkContainer } from 'react-router-bootstrap';
 import React from 'react';
 import { appState } from '../../store/atoms';
@@ -16,30 +16,27 @@ const NavItems = () => {
     history.push('/confirm');
   }
 
-  if (authenticated) {
-    return (
-      <Navbar.Collapse className="justify-content-end">
-        <span>{username}</span>
-        <Nav activeKey={window.location.pathname}>
-          <LinkContainer to="/logout">
-            <Nav.Link onSelect={handleLogout}>Logout</Nav.Link>
-          </LinkContainer>
-        </Nav>
-      </Navbar.Collapse>
-    );
-  }
-
   return (
-    <Navbar.Collapse className="justify-content-end">
-      <Nav activeKey={window.location.pathname}>
-        <LinkContainer to="/signup">
-          <Nav.Link>Signup</Nav.Link>
-        </LinkContainer>
-        <LinkContainer to="/login">
-          <Nav.Link>Login</Nav.Link>
-        </LinkContainer>
-      </Nav>
-    </Navbar.Collapse>
+    <>
+      {!authenticated && (
+      <LinkContainer to="/">
+        <li className="navigation__item navigation__item--home">Home</li>
+      </LinkContainer>
+      )}
+      {authenticated && <li className="navigation__username">{username}</li>}
+      {authenticated ? (
+        <li className="navigation__item" onClick={handleLogout}>Logout</li>
+      ) : (
+        <>
+          <LinkContainer to="/signup">
+            <li className="navigation__item">Signup</li>
+          </LinkContainer>
+          <LinkContainer to="/login">
+            <li className="navigation__item">Login</li>
+          </LinkContainer>
+        </>
+      )}
+    </>
   );
 };
 
