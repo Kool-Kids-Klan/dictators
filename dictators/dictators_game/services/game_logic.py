@@ -132,6 +132,8 @@ class Game:
                         "color": tile.owner.color if tile.owner else "white",
                         "army": tile.army
                     }
+                    if tile.army == 0:
+                        player_map[y][x].pop("army")
                 elif tile.terrain in ["mountain", "barracks", "capital"]:
                     player_map[y][x] = {
                         "terrain": "obstacle",
