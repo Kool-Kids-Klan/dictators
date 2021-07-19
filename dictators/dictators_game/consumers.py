@@ -7,7 +7,6 @@ from channels.db import database_sync_to_async
 from channels.exceptions import StopConsumer
 
 from dictators.dictators_game.services.user_manager import get_user
-from dictators.dictators_game.services.lobby_service import temp_lobby
 from dictators.dictators_game.services.game_logic import Game, GAMES
 from dictators.dictators_game.services.lobby_service import Lobby, LOBBIES
 
@@ -27,8 +26,10 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
     async def tick(self):
         while True:
             print('ticking')
-            game_tick = await sync_to_async(self.game.tick)()
-            # print(game_tick)
+            self.game = GAMES[self.room_name]
+            self.lobby = LOBBIES[self.room_name]
+            game_tick = self.game.tick()
+            winner = game_tick.get('winner', None)
 
             for player in self.lobby.get_all_players():
                 player_name = player.user.username
@@ -42,6 +43,23 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                     },
                     'event': 'TICK'
                 })
+
+            if winner:
+                print('and the winner is', winner)
+                user = await self.get_user_db(winner)
+                await self.user_won(user)
+                await self.channel_layer.group_send(self.room_group_name, {
+                    'type': 'send_message',
+                    'message': winner,
+                    'event': 'GAME_OVER',
+                })
+                del GAMES[self.room_name]
+                await self.disconnect(1000)
+
+            if not self.lobby.get_all_players():
+                del LOBBIES[self.room_name]
+                del GAMES[self.room_name]
+                await self.disconnect(1000)
 
             print('tick is happening')
             await asyncio.sleep(TICK)
@@ -60,8 +78,13 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             'event': 'START'
         })
 
-        loop = asyncio.get_event_loop()
-        self.task = loop.create_task(self.tick())
+        # loop = asyncio.get_event_loop()
+        # self.task = loop.create_task(self.tick())
+
+    @database_sync_to_async
+    def user_won(self, user):
+        user.games_won += 1
+        user.save()
 
     @database_sync_to_async
     def get_user_db(self, username):
@@ -105,10 +128,22 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         if self.lobby.all_ready():
             self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 30, 16, 8, 64)
             GAMES[self.room_name] = self.game
+            # await self.channel_layer.group_send(self.lobby.players.user.username, {
+            #     'type': 'send_message',
+            #     'message': '',
+            #     'event': 'START_TICKING_BRO',
+            # })
+            await self.send_json({
+                'payload': {
+                    'message': '',
+                    'event': 'START_TICKING_BRO',
+                }
+            })
+            # await self.start_game()
             await self.channel_layer.group_send(self.room_group_name, {
                 'type': 'send_start',
                 'message': '',
-                'event': 'start_game',
+                'event': '',
             })
             # await self.start_game()
 
@@ -126,8 +161,8 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         user = await self.get_user_db(username)
         self.lobby.remove_player(user)
         # lobby is empty, remove lobby
-        if not self.lobby.get_all_players():
-            del LOBBIES[self.room_name]
+        # if not self.lobby.get_all_players():
+        #     del LOBBIES[self.room_name]
 
         await self.disconnect(3)
 
@@ -220,6 +255,10 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
         if event == 'MAKE_MOVE':
             await self.make_move(message)
+
+        if event == 'START_TICK':
+            loop = asyncio.get_event_loop()
+            self.task = loop.create_task(self.tick())
 
     async def send_start(self, res):
         await self.start_game()
