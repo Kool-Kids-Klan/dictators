@@ -41,8 +41,22 @@ table,
 }
 
 .game__menu {
+    background-color: var(--color-background);
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 0.2rem solid var(--color-background-medium);
     position: absolute;
     z-index: 1;
+}
+
+.surrender-btn {
+    color: var(--color-secondary);
+    font-size: 2rem;
+    background-color: var(--color-surrender);
+    border: 0.2rem solid var(--color-secondary);
+    border-radius: 0.5rem;
 }
 
 .secret {
@@ -65,6 +79,10 @@ table,
 .score__cell,
 .score__cell-head {
     padding: 0.25rem 1rem;
+}
+
+.score__cell-head {
+    background-color: var(--color-background);
 }
 
 .score__cell {

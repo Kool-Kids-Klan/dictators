@@ -11,10 +11,8 @@ const GameMenu = () => {
   return (
     <>
       <div className="game__menu">
-        <ButtonGroup vertical>
-          <Button type="button" onClick={surrender}>Surrender</Button>
-          <ExitButton />
-        </ButtonGroup>
+        <button className="surrender-btn" type="button" onClick={surrender}>Surrender</button>
+        <ExitButton />
       </div>
       <div className="secret" />
     </>

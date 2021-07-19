@@ -19,7 +19,7 @@ const ExitButton = () => {
 
   return (
     <LinkContainer to="/">
-      <Button type="button" variant="danger" onClick={exitLobby}>Exit</Button>
+      <button type="button" className="exit-btn" onClick={exitLobby}>Exit</button>
     </LinkContainer>
   );
 };
