@@ -197,11 +197,11 @@ class Game:
             old_owner.alive = False
             old_owner.total_army = 0
             old_owner.total_land = 0
+            captured_tile.terrain = "barracks"
             for row in self.map:
                 for current_tile in row:
                     if current_tile.owner == old_owner:
                         current_tile.owner = player
-                        current_tile.terrain = "barracks"
                         player.total_army += current_tile.army
                         player.total_land += 1
 
@@ -281,9 +281,6 @@ class Game:
         move = player.premoves.popleft()
         (x, y), direction = move
         current_tile = self.map[y][x]
-        if current_tile.owner != player or current_tile.army < 2:
-            player.premoves.clear()
-            return
 
         if direction == "W":  # UP
             x_shift = 0
@@ -300,6 +297,11 @@ class Game:
         if not self._are_valid_coordinates(x + x_shift, y + y_shift):
             return
         adj_tile = self.map[y + y_shift][x + x_shift]
+        if (current_tile.owner != player or
+                current_tile.army < 2 or
+                adj_tile.terrain == "mountain"):
+            player.premoves.clear()
+            return
         if adj_tile.owner == player:
             # moving inside own territory
             adj_tile.army += current_tile.army - 1
