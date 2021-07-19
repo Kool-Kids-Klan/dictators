@@ -1,12 +1,13 @@
 from typing import List, Dict, Tuple
 import random
 
-from dictators.dictators_game.services.map_generator import generate_map
+from dictators.dictators_game.services.map_generator import generate_map, draw_map
 from dictators.dictators_game.services.lobby_service import Player
 
 
 # TODO: mapa n*m
 # TODO: cleanup, beautify, niekde (x, y) pomenit na Tile?
+# TODO: surrender
 
 
 class Game:
@@ -252,7 +253,7 @@ class Game:
             player.premoves.pop()
         elif action == "Q":
             # cancel all premoves
-            player.premoves = []
+            player.premoves.clear()
 
     def _make_move(self, player: Player) -> None:
         """
@@ -261,7 +262,9 @@ class Game:
         :param player: player to move
         :return: nothing
         """
-        move = player.premoves.pop()
+        if not player.premoves:
+            return
+        move = player.premoves.popleft()
         (x, y), direction = move
         current_tile = self.map[y][x]
         if direction == "W":  # UP
@@ -280,11 +283,15 @@ class Game:
             return
         adj_tile = self.map[y + y_shift][x + x_shift]
         if adj_tile.owner == player:
+            print("OPTION 1")
             # moving inside own territory
             adj_tile.army += current_tile.army - 1
             current_tile.army = 1
         else:
-            self._combat((x, y), adj_tile)
+            print("OPTION 2")
+            draw_map(self.map)
+            self._combat((x, y), (x+x_shift, y+y_shift))
+            draw_map(self.map)
 
     def _recruit(self, barracks_only: bool) -> None:
         """
@@ -308,11 +315,12 @@ class Game:
         """
         for player in self._get_players_alive():
             self._make_move(player)
-        if self.tick_n % 2 == 0 and self.tick != 0:
+        if self.tick_n % 2 == 0 and self.tick_n != 0:
             self.round_n += 1
             self._recruit(barracks_only=True)
             if self.round_n % 25 == 0:
                 self._recruit(barracks_only=False)
+        self.tick_n += 1
         playersAlive = self._get_players_alive()
         gameEnded = len(playersAlive) == 1
         return {
