@@ -27,6 +27,8 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
     async def tick(self):
         while True:
             print('ticking')
+            self.game = GAMES[self.room_name]
+            self.lobby = LOBBIES[self.room_name]
             game_tick = await sync_to_async(self.game.tick)()
             # print(game_tick)
 
@@ -42,6 +44,11 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                     },
                     'event': 'TICK'
                 })
+
+            if not self.lobby.get_all_players():
+                del LOBBIES[self.room_name]
+                del GAMES[self.room_name]
+                await self.disconnect(1000)
 
             print('tick is happening')
             await asyncio.sleep(TICK)
@@ -60,8 +67,8 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             'event': 'START'
         })
 
-        loop = asyncio.get_event_loop()
-        self.task = loop.create_task(self.tick())
+        # loop = asyncio.get_event_loop()
+        # self.task = loop.create_task(self.tick())
 
     @database_sync_to_async
     def get_user_db(self, username):
@@ -126,8 +133,8 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         user = await self.get_user_db(username)
         self.lobby.remove_player(user)
         # lobby is empty, remove lobby
-        if not self.lobby.get_all_players():
-            del LOBBIES[self.room_name]
+        # if not self.lobby.get_all_players():
+        #     del LOBBIES[self.room_name]
 
         await self.disconnect(3)
 
@@ -220,6 +227,10 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
         if event == 'MAKE_MOVE':
             await self.make_move(message)
+
+        if event == 'START_TICK':
+            loop = asyncio.get_event_loop()
+            self.task = loop.create_task(self.tick())
 
     async def send_start(self, res):
         await self.start_game()
