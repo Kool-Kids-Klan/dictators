@@ -67,8 +67,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
     def get_user_db(self, username):
         return get_user(username)
 
-    async def add_user_to_lobby(self, username):
-        user = await self.get_user_db(username)
+    async def add_user_to_lobby(self, user):
         self.lobby.add_player(user)
         player_dict = [player.as_json() for player in self.lobby.get_all_players()]
         print('this are players that are joined in one lobby', player_dict)
@@ -82,6 +81,17 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             user.username,
             self.channel_name
         )
+
+    async def create_lobby(self, username):
+        user = await self.get_user_db(username)
+        self.lobby = Lobby()
+        LOBBIES.append({self.room_name: self.lobby})
+        await self.add_user_to_lobby(user)
+
+    async def join_user_to_lobby(self, username):
+        user = await self.get_user_db(username)
+        self.lobby = LOBBIES[self.room_name]
+        await self.add_user_to_lobby(user)
 
     async def user_get_ready(self, username):
         user = await self.get_user_db(username)
@@ -132,8 +142,8 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
-        self.lobby = Lobby()
-        LOBBIES.append({self.room_name: self.lobby})
+        # self.lobby = Lobby()
+        # LOBBIES.append({self.room_name: self.lobby})
 
     async def disconnect(self, close_code):
         print("Disconnected")
@@ -177,14 +187,17 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                 'event': "END"
             })
 
-        if event == 'START_GAME':
-            await self.start_game()
-            game_map = []
-            loop = asyncio.get_event_loop()
-            self.task = loop.create_task(self.tick(game_map))
+        # if event == 'START_GAME':
+        #     await self.start_game()
+        #     game_map = []
+        #     loop = asyncio.get_event_loop()
+        #     self.task = loop.create_task(self.tick(game_map))
 
         if event == 'JOIN_ROOM':
-            await self.add_user_to_lobby(message)
+            await self.join_user_to_lobby(message)
+
+        if event == 'CREATE_ROOM':
+            await self.create_lobby(message)
 
         if event == 'GET_READY':
             await self.user_get_ready(message)
