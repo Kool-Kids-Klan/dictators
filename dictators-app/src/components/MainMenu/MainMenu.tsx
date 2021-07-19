@@ -22,8 +22,9 @@ const MainMenu = () => {
 
   return (
     <div className="menu">
-      <Form.Label>Lobby code</Form.Label>
+      <Form.Label className="form__label">Lobby code</Form.Label>
       <Form.Control
+        className="form__input"
         autoFocus
         type="username"
         value={lobbyId}
