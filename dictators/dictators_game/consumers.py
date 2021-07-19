@@ -160,9 +160,15 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
     async def user_exit_lobby(self, username):
         user = await self.get_user_db(username)
         self.lobby.remove_player(user)
-        # lobby is empty, remove lobby
-        # if not self.lobby.get_all_players():
-        #     del LOBBIES[self.room_name]
+
+        self.channel_layer.group_send(self.room_group_name, {
+            'type': 'send_message',
+            'message': {
+                'players': [player.as_json() for player in self.lobby.get_all_players()],
+                'id': self.room_name,
+            },
+            'event': 'EXIT_USER',
+        })
 
         await self.disconnect(3)
 
