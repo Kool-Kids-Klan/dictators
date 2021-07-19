@@ -1,13 +1,14 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import { LinkContainer } from 'react-router-bootstrap';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentGameSocket } from '../store/selectors';
-import { appState } from '../store/atoms';
+import { appState, connectEventState } from '../store/atoms';
 
 const ExitButton = () => {
   const gameSocket = useRecoilValue(currentGameSocket);
   const { username } = useRecoilValue(appState);
+  const [, setConnectEvent] = useRecoilState(connectEventState);
 
   const exitLobby = () => {
     const data = {
@@ -15,6 +16,7 @@ const ExitButton = () => {
       message: username,
     };
     gameSocket.send(JSON.stringify(data));
+    setConnectEvent('');
   };
 
   return (
