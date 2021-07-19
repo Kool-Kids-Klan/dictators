@@ -27,12 +27,13 @@ const Lobby = () => {
     gameSocket.send(JSON.stringify(data));
   };
 
+  const gameId = (id !== '') ? `Lobby code: ${id}` : 'Error joining lobby';
+
   return (
     <div className="lobby">
       <h1>This is game lobby</h1>
       <h2>
-        Lobby code:&nbsp;
-        {id}
+        {gameId}
       </h2>
       <hr />
       {playersBlocks}
