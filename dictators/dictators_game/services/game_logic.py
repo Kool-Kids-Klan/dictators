@@ -390,5 +390,5 @@ class Game:
                 for player in self.players
             },
             "scoreboard": self._get_scoreboard(),
-            "winner": self.winner
+            "winner": self.winner.get_username() if self.winner else None
         }
