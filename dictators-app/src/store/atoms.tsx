@@ -53,7 +53,7 @@ export const scoreState = atom<IScore[]>({
   }],
 });
 
-const webSocketUrl = 'localhost:8000';
+const webSocketUrl = `${window.location.hostname}:8000`;
 const connectionString = `ws://${webSocketUrl}/ws/play/`;
 
 export const gameSocketUrlState = atom<string>({

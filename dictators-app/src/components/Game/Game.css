@@ -124,3 +124,6 @@ table,
     background-image: url("../../resources/images/castle.svg");
 }
 
+.obstacle {
+    background-image: url("../../resources/images/questionmark.svg");
+}

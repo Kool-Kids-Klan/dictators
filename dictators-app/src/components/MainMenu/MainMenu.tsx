@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import { connectEventState, gameSocketUrlState } from '../../store/atoms';
 import { makeId } from '../../utils/utils';
 
-const webSocketUrl = 'localhost:8000';
+const webSocketUrl = `${window.location.hostname}:8000`;
 const connectionString = `ws://${webSocketUrl}/ws/play/`;
 
 const MainMenu = () => {
