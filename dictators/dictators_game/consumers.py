@@ -9,7 +9,7 @@ from dictators.dictators_game.services.user_manager import get_user
 from dictators.dictators_game.services.lobby_service import temp_lobby
 from dictators.dictators_game.services.game_logic import Game
 
-TICK = 1
+TICK = 5
 
 
 class DictatorsConsumer(AsyncJsonWebsocketConsumer):
@@ -34,7 +34,9 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                     'type': 'send_message',
                     'message': {
                         'map': game_tick['maps'][player_name],
-                        'scoreboard': game_tick['scoreboard']
+                        'scoreboard': game_tick['scoreboard'],
+                        'winner': game_tick['winner'],
+                        'premoves': game_tick['premoves'][player_name]
                     },
                     'event': 'TICK'
                 })
