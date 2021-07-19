@@ -213,6 +213,9 @@ class Game:
                         current_tile.owner = player
                         player.total_army += current_tile.army
                         player.total_land += 1
+                    if old_owner in current_tile.discoveredBy:
+                        current_tile.discoveredBy.remove(old_owner)
+                        current_tile.discoveredBy.add(player)
 
     def _combat(self, attacker: Tuple[int, int], defender: Tuple[int, int]) -> None:
         """
