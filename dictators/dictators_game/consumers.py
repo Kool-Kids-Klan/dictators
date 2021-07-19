@@ -50,7 +50,11 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             self.task.cancel()
 
     async def start_game(self):
-        self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 16, 16, 32)
+        self.game = await sync_to_async(Game)(players=self.lobby.get_all_players(),
+                                              width=30,
+                                              height=16,
+                                              n_barracks=16,
+                                              n_mountains=32)
 
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
