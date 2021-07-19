@@ -60,3 +60,8 @@ export const gameSocketUrlState = atom<string>({
   key: 'gameSocketUrlState',
   default: `${connectionString}${makeId(5)}/`,
 });
+
+export const connectEventState = atom<string>({
+  key: 'connectEvent',
+  default: 'CREATE_ROOM',
+});
