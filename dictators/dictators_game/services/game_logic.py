@@ -253,7 +253,7 @@ class Game:
         if action in "WASD":
             # W=up  A=left  S=down  D=right
             player.premoves.append((from_tile, action))
-        elif action == "E":
+        elif action == "E" and player.premoves:
             # cancel last premove
             player.premoves.pop()
         elif action == "Q":
