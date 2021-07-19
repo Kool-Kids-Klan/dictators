@@ -181,11 +181,9 @@ class Game:
         :param player: new owner
         :param army: amount of army of the new owner on the tile
         """
-        # print(f"CAPTURING TILE {tile} WITH REMAINING ARMY {army}")
         x, y = tile
         captured_tile = self.map[y][x]
         old_owner = captured_tile.owner
-        # print("old owner:", old_owner)
 
         if old_owner:
             old_owner.total_land -= 1
@@ -196,7 +194,6 @@ class Game:
         self._discover_tile_and_adjacent(tile, player)
 
         if captured_tile.terrain == "capital":
-            # print("TRYING TO CAPTURE CAPITAL")
             old_owner.alive = False
             old_owner.total_army = 0
             old_owner.total_land = 0
@@ -207,8 +204,6 @@ class Game:
                         current_tile.owner = player
                         player.total_army += current_tile.army
                         player.total_land += 1
-
-        # print("TILE SUCCESSFULLY CAPTURED")
 
     def _combat(self, attacker: Tuple[int, int], defender: Tuple[int, int]) -> None:
         """
@@ -223,23 +218,17 @@ class Game:
         attacker_army = self.map[a_y][a_x].army - 1
         defender_army = self.map[d_y][d_x].army
         attacking_player = self.map[a_y][a_x].owner
-        # print(f"combat info: {attacker_army} (attacker) vs {defender_army} (defender)")
         if attacker_army < defender_army:
-            # print("DEFENDER WINS")
             # defender wins
             self._update_army(defender, -attacker_army)
             self._update_army(attacker, -attacker_army)
         elif attacker_army > defender_army:
-            # print("ATTACKER WINS")
             # attacker wins
             self.map[a_y][a_x].army = 1
             attacking_player.total_army -= defender_army
-            # print("army should be updated now")
             self._capture_tile(defender, attacking_player,
                                attacker_army-defender_army)
-            # print("tile should be captured now")
         else:
-            # print("TIE")
             # tie
             self._update_army(defender, -defender_army)
             self._update_army(attacker, -attacker_army)
@@ -256,7 +245,6 @@ class Game:
         :param action: action to perform, one of: "W|A|S|D|E|Q"
         :return: nothing
         """
-        # print(f"SUBMITTING MOVE {action} (from {from_tile}) for player {username}")
         player = self._get_player_by_username(username)
         if not player.alive:
             return
@@ -301,7 +289,7 @@ class Game:
             return
         adj_tile = self.map[y + y_shift][x + x_shift]
         if (current_tile.owner != player or
-                current_tile.army < 2 or
+                current_tile.army == 0 or
                 adj_tile.terrain == "mountain"):
             player.premoves.clear()
             return
@@ -310,7 +298,6 @@ class Game:
             adj_tile.army += current_tile.army - 1
             current_tile.army = 1
         else:
-            # print(f"ATTACKING FIELD {(x+x_shift, y+y_shift)} FROM {(x, y)}")
             self._combat((x, y), (x+x_shift, y+y_shift))
 
     def _recruit(self, barracks_only: bool) -> None:
