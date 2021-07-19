@@ -93,7 +93,6 @@ const Game = () => {
         setSelected(premoves[0].from);
       }
       setPremoves([]);
-      return;
     } else if (e.code === 'Escape') {
       setMenu(!menu);
       return;

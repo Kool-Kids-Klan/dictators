@@ -103,7 +103,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             'event': 'USER_READY'
         })
         if self.lobby.all_ready():
-            self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 16, 8, 0)
+            self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 30, 16, 8, 0)
             GAMES[self.room_name] = self.game
             await self.channel_layer.group_send(self.room_group_name, {
                 'type': 'send_start',
