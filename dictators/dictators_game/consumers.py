@@ -4,6 +4,7 @@ import asyncio
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
+from channels.exceptions import StopConsumer
 
 from dictators.dictators_game.services.user_manager import get_user
 from dictators.dictators_game.services.lobby_service import temp_lobby
@@ -64,6 +65,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         user = await self.get_user_db(username)
         self.lobby.add_player(user)
         player_dict = [player.as_json() for player in self.lobby.get_all_players()]
+        print('this are players that are joined in one lobby', player_dict)
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
             'message': {'players': player_dict, 'id': self.room_name},
@@ -104,7 +106,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         if not self.lobby.get_all_players():
             LOBBIES.remove({self.room_name: self.lobby})
 
-        await self.disconnect(200)
+        await self.disconnect(3)
 
     async def connect(self):
         print('User is trying to connect to room')
@@ -129,6 +131,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+        await self.close(1000)
 
     async def receive(self, text_data):
         """
