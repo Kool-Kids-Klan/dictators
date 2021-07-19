@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from dictators.dictators_game.services import user_manager
+from dictators.dictators_game import models
 
 
 # TODO
@@ -74,3 +75,10 @@ class AuthenticateUser(APIView):
         return Response(status=200, data={
             "result": "User authenticated."
         })
+
+
+class Leaderboard(APIView):
+
+    def get(self, request):
+        sorted_users = models.User.objects.all().order_by("-games_won")
+        return Response(sorted_users.values("username", "games_won", "games_played")[:5])
