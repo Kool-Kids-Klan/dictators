@@ -9,7 +9,7 @@ from dictators.dictators_game.services.user_manager import get_user
 from dictators.dictators_game.services.lobby_service import temp_lobby
 from dictators.dictators_game.services.game_logic import Game
 
-TICK = 5
+TICK = 1
 
 
 class DictatorsConsumer(AsyncJsonWebsocketConsumer):
@@ -26,7 +26,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         while True:
             print('ticking')
             game_tick = await sync_to_async(self.game.tick)()
-            print(game_tick)
+            # print(game_tick)
 
             for player in self.lobby.get_all_players():
                 player_name = player.user.username
