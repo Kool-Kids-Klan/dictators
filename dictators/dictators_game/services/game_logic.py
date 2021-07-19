@@ -5,7 +5,6 @@ from dictators.dictators_game.services.map_generator import generate_map, draw_m
 from dictators.dictators_game.services.lobby_service import Player
 
 
-# TODO: mapa n*m
 # TODO: cleanup, beautify, niekde (x, y) pomenit na Tile?
 # TODO: surrender
 
@@ -183,17 +182,19 @@ class Game:
 
         :param tile: considered tile
         :param player: new owner
-        :param army: amount of army of the new owner on the tile
+        :param army: amount of army that the attacker enters the tile with
         """
         x, y = tile
         captured_tile = self.map[y][x]
         old_owner = captured_tile.owner
 
+        player.total_army -= captured_tile.army
         if old_owner:
             old_owner.total_land -= 1
+            old_owner.total_army -= captured_tile.army
             self._remove_tile_visibility(tile, old_owner)
         player.total_land += 1
-        captured_tile.army = army
+        captured_tile.army = army - captured_tile.army
         captured_tile.owner = player
         self._discover_tile_and_adjacent(tile, player)
 
@@ -229,9 +230,7 @@ class Game:
         elif attacker_army > defender_army:
             # attacker wins
             self.map[a_y][a_x].army = 1
-            attacking_player.total_army -= defender_army
-            self._capture_tile(defender, attacking_player,
-                               attacker_army-defender_army)
+            self._capture_tile(defender, attacking_player, attacker_army)
         else:
             # tie
             self._update_army(defender, -defender_army)
