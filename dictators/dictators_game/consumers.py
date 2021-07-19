@@ -9,7 +9,7 @@ from dictators.dictators_game.services.user_manager import get_user
 from dictators.dictators_game.services.lobby_service import temp_lobby
 from dictators.dictators_game.services.game_logic import Game
 
-TICK = 1
+TICK = 0.5
 
 
 class DictatorsConsumer(AsyncJsonWebsocketConsumer):
@@ -50,7 +50,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             self.task.cancel()
 
     async def start_game(self):
-        self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 16, 8, 0)
+        self.game = await sync_to_async(Game)(self.lobby.get_all_players(), 16, 16, 32)
 
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
