@@ -8,11 +8,12 @@ import {
 } from '../../store/atoms';
 import { Coor } from '../../resources/types/types';
 import { currentGameSocket } from '../../store/selectors';
+import GameMenu from './GameMenu';
 
 const Game = () => {
   const { game } = useRecoilValue(gameState);
   const [premoves, setPremoves] = useRecoilState(premovesState);
-  const [scores, setScores] = useRecoilState(scoreState);
+  const scores = useRecoilValue(scoreState);
   const { username } = useRecoilValue(appState);
   const gameSocket = useRecoilValue(currentGameSocket);
   // TODO delete default value / set to base Coor from backend
@@ -105,8 +106,13 @@ const Game = () => {
     gameSocket.send(JSON.stringify(data));
   };
 
+  const gameMenu = (menu) ? (
+    <GameMenu />
+  ) : <></>;
+
   return (
     <div className="game container-fluid">
+      {gameMenu}
       <table className="game__table">
         <tbody>
           {board}
