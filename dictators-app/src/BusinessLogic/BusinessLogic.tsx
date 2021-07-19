@@ -3,7 +3,7 @@ import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 import { useHistory } from 'react-router-dom';
 import { currentGameSocket } from '../store/selectors';
 import {
-  appState, gameState, lobbyState, premovesState, scoreState,
+  appState, connectEventState, gameState, lobbyState, premovesState, scoreState,
 } from '../store/atoms';
 import { ILobby, IPlayer } from '../resources/types/types';
 
@@ -30,11 +30,13 @@ export const connect = () => {
   const history = useHistory();
   const [lobby, setLobby] = useRecoilState(lobbyState);
   const [, setPremoves] = useRecoilState(premovesState);
+  const openEvent = useRecoilValue(connectEventState);
+
   gameSocket.onopen = function open() {
-    console.log('WebSockets connection created.');
+    console.log('WebSockets connection created.', openEvent);
     // on websocket open, send the START event.
     gameSocket.send(JSON.stringify({
-      event: 'JOIN_ROOM',
+      event: openEvent,
       message: username,
     }));
   };
