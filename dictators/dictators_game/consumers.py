@@ -29,6 +29,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             self.game = GAMES[self.room_name]
             self.lobby = LOBBIES[self.room_name]
             game_tick = self.game.tick()
+            winner = game_tick.get('winner', None)
 
             for player in self.lobby.get_all_players():
                 player_name = player.user.username
@@ -42,6 +43,18 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                     },
                     'event': 'TICK'
                 })
+
+            if winner:
+                print('and the winner is', winner)
+                user = await self.get_user_db(winner)
+                await self.user_won(user)
+                await self.channel_layer.group_send(self.room_group_name, {
+                    'type': 'send_message',
+                    'message': winner,
+                    'event': 'GAME_OVER',
+                })
+                del GAMES[self.room_name]
+                await self.disconnect(1000)
 
             if not self.lobby.get_all_players():
                 del LOBBIES[self.room_name]
@@ -67,6 +80,11 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
         # loop = asyncio.get_event_loop()
         # self.task = loop.create_task(self.tick())
+
+    @database_sync_to_async
+    def user_won(self, user):
+        user.games_won += 1
+        user.save()
 
     @database_sync_to_async
     def get_user_db(self, username):
