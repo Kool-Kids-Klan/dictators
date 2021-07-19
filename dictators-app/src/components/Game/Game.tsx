@@ -22,7 +22,13 @@ const Game = () => {
     const squares = row.map((square, x) => {
       const coords: Coor = [y, x];
       const selectClass = (coords[0] === selected[0] && coords[1] === selected[1]) ? 'selected' : '';
-      const selectSquare = () => setSelected(coords);
+      const selectSquare = () => {
+        if (square.color === scores.find((s) => s.username === username)?.color) {
+          setSelected(coords);
+        } else {
+          setSelected([-1, -1]);
+        }
+      };
       // TODO overwrites terrain in CSS
       const directions: Set<string> = new Set();
       premoves.forEach((premove) => {
