@@ -21,20 +21,29 @@ class Game:
         self.round_n = 1
         self.tick_n = 0
 
-    def _get_player_by_username(self, username: str):
+    def _get_player_by_username(self, username: str) -> Player:
+        """
+        :param username: username of the requested player
+        :return: Player instance with given username
+        """
         player = [player for player in self.players
                   if player.get_username() == username]
         if player:
             return player[0]
         raise ValueError(f"Player with username {username} does not exist.")
 
-    def _get_players_alive(self):
+    def _get_players_alive(self) -> List[Player]:
         """
         :return: the number of remaining players alive
         """
         return [player for player in self.players if player.alive]
 
     def _assign_capitals(self) -> None:
+        """
+        Randomly assign capitals on the generated map to the players.
+        To be called before the game actually starts (before first tick).
+        :return: nothing
+        """
         capitals = [(x, y) for x in range(len(self.map[0]))
                     for y in range(len(self.map))
                     if self.map[y][x].terrain == "capital"]
@@ -46,6 +55,9 @@ class Game:
             self._discover_tile_and_adjacent((x, y), owner)
 
     def _are_valid_coordinates(self, x: int, y: int) -> bool:
+        """
+        :return: True if given coordinates are valid, else False
+        """
         return 0 <= x < len(self.map[0]) and 0 <= y < len(self.map)
 
     def _tile_neighbors_with_player(self,
@@ -69,6 +81,13 @@ class Game:
     def _discover_tile_and_adjacent(self,
                                     tile: Tuple[int, int],
                                     player: Player) -> None:
+        """
+        Mark the given tile and its neighbors as discovered by the given player.
+
+        :param tile: tile to be discovered
+        :param player: discovering player
+        :return: nothing
+        """
         x, y = tile
         for x_shift in range(-1, 2):
             for y_shift in range(-1, 2):
@@ -78,6 +97,13 @@ class Game:
     def _remove_tile_visibility(self,
                                 tile: Tuple[int, int],
                                 player: Player) -> None:
+        """
+        Remove visibility that the given tile provided for its old owner.
+
+        :param tile: recently captured tile
+        :param player: the old owner of the tile
+        :return: nothing
+        """
         x, y = tile
         self.map[y][x].discoveredBy.remove(player)
         for x_shift in range(-1, 2):
@@ -124,13 +150,14 @@ class Game:
         scoreboard.sort(key=lambda player: player["army"], reverse=True)
         return scoreboard
 
-    def _update_army(self, tile: Tuple[int, int], change: int):
+    def _update_army(self, tile: Tuple[int, int], change: int) -> None:
         """
         Change the amount of army on the given tile.
         Assumes that the updated amount will not be negative.
 
         :param tile: considered tile
         :param change: amount of army to add/subtract
+        :return: nothing
         """
         x, y = tile
         self.map[y][x].army += change
