@@ -24,7 +24,13 @@ const Game = () => {
     const squares = row.map((square, x) => {
       const coords: Coor = [y, x];
       const selectClass = (coords[0] === selected[0] && coords[1] === selected[1]) ? 'selected' : '';
-      const selectSquare = () => setSelected(coords);
+      const selectSquare = () => {
+        if (square.color === scores.find((s) => s.username === username)?.color) {
+          setSelected(coords);
+        } else {
+          setSelected([-1, -1]);
+        }
+      };
       // TODO overwrites terrain in CSS
       const directions: Set<string> = new Set();
       premoves.forEach((premove) => {
@@ -78,10 +84,11 @@ const Game = () => {
       if (premoves.length < 1) {
         return;
       }
+      pressedKey = 'E';
       setPremoves(premoves.slice(0, -1));
       setSelected(premoves[premoves.length - 1].from);
-      return;
     } else if (e.code === 'KeyQ') {
+      pressedKey = 'Q';
       if (premoves.length > 0) {
         setSelected(premoves[0].from);
       }
@@ -93,7 +100,6 @@ const Game = () => {
     } else {
       return;
     }
-    setPremoves([...premoves, { from: selected, direction }]);
     const data = {
       event: 'MAKE_MOVE',
       message: {
@@ -102,8 +108,11 @@ const Game = () => {
         coor: selected,
       },
     };
-    setSelected(x);
     gameSocket.send(JSON.stringify(data));
+    if (direction !== '') {
+      setPremoves([...premoves, { from: selected, direction }]);
+      setSelected(x);
+    }
   };
 
   const gameMenu = (menu) ? (

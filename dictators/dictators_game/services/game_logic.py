@@ -15,11 +15,14 @@ GAMES = {}
 class Game:
     def __init__(self,
                  players: List[Player],
-                 map_size: int,
+                 width: int,
+                 height: int,
                  n_barracks: int,
                  n_mountains: int):
         self.players = players
-        self.map = generate_map(map_size, len(players), n_barracks, n_mountains)
+        self.width = width
+        self.height = height
+        self.map = generate_map(width, height, len(players), n_barracks, n_mountains)
         self._assign_capitals()
         self.round_n = 1
         self.tick_n = 0
@@ -47,8 +50,8 @@ class Game:
         To be called before the game actually starts (before first tick).
         :return: nothing
         """
-        capitals = [(x, y) for x in range(len(self.map[0]))
-                    for y in range(len(self.map))
+        capitals = [(x, y) for x in range(self.width)
+                    for y in range(self.height)
                     if self.map[y][x].terrain == "capital"]
         random.shuffle(capitals)
         for i in range(len(self.players)):
@@ -61,7 +64,7 @@ class Game:
         """
         :return: True if given coordinates are valid, else False
         """
-        return 0 <= x < len(self.map[0]) and 0 <= y < len(self.map)
+        return 0 <= x < self.width and 0 <= y < self.height
 
     def _tile_neighbors_with_player(self,
                                     tile: Tuple[int, int],
@@ -120,10 +123,10 @@ class Game:
         """
         :return: the map for the given player exactly like he sees it.
         """
-        player_map = [[{} for _ in range(len(self.map[0]))]
-                      for _ in range(len(self.map))]
-        for y in range(len(player_map)):
-            for x in range(len(player_map[0])):
+        player_map = [[{} for _ in range(self.width)]
+                      for _ in range(self.height)]
+        for y in range(self.height):
+            for x in range(self.width):
                 tile = self.map[y][x]
                 if player in tile.discoveredBy or not player.alive:
                     player_map[y][x] = {
@@ -131,6 +134,8 @@ class Game:
                         "color": tile.owner.color if tile.owner else "white",
                         "army": tile.army
                     }
+                    if tile.army == 0:
+                        player_map[y][x].pop("army")
                 elif tile.terrain in ["mountain", "barracks", "capital"]:
                     player_map[y][x] = {
                         "terrain": "obstacle",
@@ -180,10 +185,9 @@ class Game:
         :param player: new owner
         :param army: amount of army of the new owner on the tile
         """
-        # print(f"CAPTURING TILE {tile} WITH REMAINING ARMY {army}")
-        captured_tile = self.map[tile[1]][tile[0]]
+        x, y = tile
+        captured_tile = self.map[y][x]
         old_owner = captured_tile.owner
-        # print("old owner:", old_owner)
 
         if old_owner:
             old_owner.total_land -= 1
@@ -194,20 +198,16 @@ class Game:
         self._discover_tile_and_adjacent(tile, player)
 
         if captured_tile.terrain == "capital":
-            # print("TRYING TO CAPTURE CAPITAL")
             old_owner.alive = False
             old_owner.total_army = 0
             old_owner.total_land = 0
-            for x in range(len(self.map[0])):
-                for y in range(len(self.map)):
-                    current_tile = self.map[y][x]
+            captured_tile.terrain = "barracks"
+            for row in self.map:
+                for current_tile in row:
                     if current_tile.owner == old_owner:
                         current_tile.owner = player
-                        current_tile.terrain = "barracks"
                         player.total_army += current_tile.army
                         player.total_land += 1
-
-        # print("TILE SUCCESSFULLY CAPTURED")
 
     def _combat(self, attacker: Tuple[int, int], defender: Tuple[int, int]) -> None:
         """
@@ -222,22 +222,17 @@ class Game:
         attacker_army = self.map[a_y][a_x].army - 1
         defender_army = self.map[d_y][d_x].army
         attacking_player = self.map[a_y][a_x].owner
-        # print(f"combat info: {attacker_army} (attacker) vs {defender_army} (defender)")
         if attacker_army < defender_army:
-            # print("DEFENDER WINS")
             # defender wins
             self._update_army(defender, -attacker_army)
             self._update_army(attacker, -attacker_army)
         elif attacker_army > defender_army:
-            # print("ATTACKER WINS")
             # attacker wins
-            self._update_army(attacker, -attacker_army)
-            # print("army should be updated now")
+            self.map[a_y][a_x].army = 1
+            attacking_player.total_army -= defender_army
             self._capture_tile(defender, attacking_player,
                                attacker_army-defender_army)
-            # print("tile should be captured now")
         else:
-            # print("TIE")
             # tie
             self._update_army(defender, -defender_army)
             self._update_army(attacker, -attacker_army)
@@ -254,7 +249,6 @@ class Game:
         :param action: action to perform, one of: "W|A|S|D|E|Q"
         :return: nothing
         """
-        # print(f"SUBMITTING MOVE {action} (from {from_tile}) for player {username}")
         player = self._get_player_by_username(username)
         if not player.alive:
             return
@@ -263,7 +257,7 @@ class Game:
         if action in "WASD":
             # W=up  A=left  S=down  D=right
             player.premoves.append((from_tile, action))
-        elif action == "E":
+        elif action == "E" and player.premoves:
             # cancel last premove
             player.premoves.pop()
         elif action == "Q":
@@ -282,9 +276,6 @@ class Game:
         move = player.premoves.popleft()
         (x, y), direction = move
         current_tile = self.map[y][x]
-        if current_tile.owner != player or current_tile.army < 2:
-            player.premoves.clear()
-            return
 
         if direction == "W":  # UP
             x_shift = 0
@@ -301,12 +292,16 @@ class Game:
         if not self._are_valid_coordinates(x + x_shift, y + y_shift):
             return
         adj_tile = self.map[y + y_shift][x + x_shift]
+        if (current_tile.owner != player or
+                current_tile.army == 0 or
+                adj_tile.terrain == "mountain"):
+            player.premoves.clear()
+            return
         if adj_tile.owner == player:
             # moving inside own territory
             adj_tile.army += current_tile.army - 1
             current_tile.army = 1
         else:
-            # print(f"ATTACKING FIELD {(x+x_shift, y+y_shift)} FROM {(x, y)}")
             self._combat((x, y), (x+x_shift, y+y_shift))
 
     def _recruit(self, barracks_only: bool) -> None:
@@ -315,8 +310,8 @@ class Game:
         :param barracks_only: if False, also recruit +1 on owned plain tiles
         :return: nothing
         """
-        for x in range(len(self.map[0])):
-            for y in range(len(self.map)):
+        for x in range(self.width):
+            for y in range(self.height):
                 tile = self.map[y][x]
                 if tile.owner:
                     if tile.terrain in ["barracks", "capital"] or not barracks_only:
