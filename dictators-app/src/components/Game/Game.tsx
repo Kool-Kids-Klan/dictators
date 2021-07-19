@@ -89,15 +89,15 @@ const Game = () => {
       return;
     }
     setPremoves([...premoves, { from: selected, direction }]);
-    setSelected(x);
     const data = {
       event: 'MAKE_MOVE',
       message: {
         key: pressedKey,
         username,
-        coor: x,
+        coor: selected,
       },
     };
+    setSelected(x);
     gameSocket.send(JSON.stringify(data));
   };
 

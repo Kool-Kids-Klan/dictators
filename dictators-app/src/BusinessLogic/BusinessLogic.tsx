@@ -88,7 +88,7 @@ export const connect = () => {
             dir = 'right';
           }
           return {
-            from: premove[0],
+            from: [premove[0][1], premove[0][0]],
             direction: dir,
           };
         }));
