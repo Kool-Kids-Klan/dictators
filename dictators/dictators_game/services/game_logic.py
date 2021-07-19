@@ -205,6 +205,7 @@ class Game:
             old_owner.alive = False
             old_owner.total_army = 0
             old_owner.total_land = 0
+            old_owner.premoves.clear()
             captured_tile.terrain = "barracks"
             for row in self.map:
                 for current_tile in row:
