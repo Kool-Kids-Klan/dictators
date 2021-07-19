@@ -62,6 +62,10 @@
     font-size: 2rem;
 }
 
+.join-btn:hover {
+    color: var(--color-primary);
+}
+
 .menu__btn:hover {
     color: var(--color-primary);
 }
@@ -76,7 +80,8 @@
 .form__label,
 .form__input,
 .LoaderButton,
-.login__error-msg {
+.login__error-msg,
+.join-btn {
     font-size: 1.5rem;
 }
 
@@ -159,7 +164,6 @@
 
 .lobby__controls {
     display: flex;
-    font-size: 2rem;
 }
 
 .ready-btn,
@@ -169,6 +173,7 @@
     border: 0.2rem solid var(--color-secondary);
     border-radius: 0.5rem;
     padding: 0 1rem;
+    font-size: 2rem;
 }
 .ready-btn:hover,
 .exit-btn:hover,

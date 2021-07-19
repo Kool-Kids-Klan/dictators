@@ -12,7 +12,7 @@
     --color-player-white: #cccccc;
 
     --color-player-ready : #039c13;
-    --color-player-notready: #db0909;
+    --color-player-notready: #8c0101;
 
     --color-tile-default: #808080;
     --color-tile-selected: white;
@@ -26,6 +26,6 @@
 
     --color-error: #e63946;
     --color-passive: var(--color-grey);
-    --color-exit: #9c0303;
+    --color-exit: #cc0000;
     --color-surrender: #039c10;
 }
