@@ -114,9 +114,12 @@ class Game:
         for x_shift in range(-1, 2):
             for y_shift in range(-1, 2):
                 adj_tile = (x+x_shift, y+y_shift)
-                if (self._are_valid_coordinates(*adj_tile) and
+                if (adj_tile != tile and
+                        self._are_valid_coordinates(*adj_tile) and
                         not self._tile_neighbors_with_player(adj_tile, player)):
                     self.map[y+y_shift][x+x_shift].discoveredBy.remove(player)
+        if self._tile_neighbors_with_player((x, y), player):
+            self.map[y][x].discoveredBy.add(player)
 
     def _get_visible_tiles(self, player: Player) -> List[List[Dict]]:
         """
@@ -135,7 +138,7 @@ class Game:
                     }
                     if tile.army == 0:
                         player_map[y][x].pop("army")
-                elif tile.terrain in ["mountain", "barracks", "capital"]:
+                elif tile.terrain in ["mountain", "barracks"]:
                     player_map[y][x] = {
                         "terrain": "obstacle",
                         "color": "gray"
@@ -188,15 +191,15 @@ class Game:
         captured_tile = self.map[y][x]
         old_owner = captured_tile.owner
 
+        captured_tile.owner = player
         player.total_army -= captured_tile.army
+        player.total_land += 1
+        self._discover_tile_and_adjacent(tile, player)
         if old_owner:
             old_owner.total_land -= 1
             old_owner.total_army -= captured_tile.army
             self._remove_tile_visibility(tile, old_owner)
-        player.total_land += 1
         captured_tile.army = army - captured_tile.army
-        captured_tile.owner = player
-        self._discover_tile_and_adjacent(tile, player)
 
         if captured_tile.terrain == "capital":
             old_owner.alive = False
