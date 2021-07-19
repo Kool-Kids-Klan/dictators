@@ -10,13 +10,15 @@
     --color-player-green: #36c940;
     --color-player-purple: #a236c9;
 
-
     --color-tile-default: #808080;
     --color-tile-selected: white;
     --color-tile-text: white;
 
     --color-background: var(--color-dark-blue);
     --color-primary: var(--color-orange);
-    --color-secondary: var(--color-light-blue);
+    --color-secondary: var(--color-grey);
     --color-font: var(--color-orange);
+
+    --color-error: #e63946;
+    --color-passive: var(--color-grey);
 }

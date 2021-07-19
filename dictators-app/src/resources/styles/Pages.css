@@ -69,4 +69,26 @@
     color: var(--color-primary);
 }
 
+.login__error-msg {
+    display: block;
+    padding: 1rem;
+    color: var(--color-error);
+    font-size: 1.5rem;
+}
 
+.form__label,
+.form__input,
+.LoaderButton,
+.login__error-msg {
+    font-size: 1.5rem;
+}
+
+.form__input {
+    background-color: var(--color-secondary);
+}
+
+.LoaderButton {
+    border: none;
+    color: var(--color-passive);
+    background-color: var(--color-primary);
+}
