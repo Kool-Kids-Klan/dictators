@@ -2,21 +2,12 @@ import React from 'react';
 import { ILobbyPlayerProps } from '../../resources/types/types';
 
 const LobbyPlayer = ({ name, color, ready }: ILobbyPlayerProps) => (
-  <div className="lobby-player">
-    {console.log('this is username', name, 'and this is read', ready)}
-    <h2>
-      Username:
-      { name }
-    </h2>
-    <h3>
+  <div className={ready ? 'lobby-player ready' : 'lobby-player notready'}>
+    <span className="lobby-player__name">{name}</span>
+    <div className="lobby-player__color">
       Color:
-      { color }
-    </h3>
-    <h4>
-      Ready:
-      { ready?.toString() }
-    </h4>
-    <hr />
+      <span className={`lobby-player__color-span ${color}`} />
+    </div>
   </div>
 );
 
