@@ -57,6 +57,11 @@
     margin: 1rem;
 }
 
+.menu__error {
+    color: var(--color-error);
+    font-size: 1.5rem;
+}
+
 .menu__btn {
     color: var(--color-secondary);
     font-size: 2rem;

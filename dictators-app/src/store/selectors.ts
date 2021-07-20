@@ -1,8 +1,8 @@
 import { selector } from 'recoil';
 import { gameSocketUrlState } from './atoms';
 
-const webSocketUrl = 'localhost:8000';
-const connectionString = `ws://${webSocketUrl}/ws/play/`;
+const webSocketUrl = `${window.location.hostname}:8000`;
+export const connectionString = `ws://${webSocketUrl}/ws/play/`;
 
 let socket: WebSocket | undefined;
 
@@ -13,13 +13,8 @@ export const currentGameSocket = selector({
     if (socket) {
       socket.close(1000);
     }
-    // if (!socket) {
-    //   return new WebSocket(`${connectionString}${makeId(5)}/`);
-    // }
-    // if (readyState !== socket.readyState) {
-    //   return new WebSocket(`${connectionString}${makeId(5)}/`);
-    // }
-    return new WebSocket(url);
+    socket = new WebSocket((url === '') ? `${connectionString}room/` : url);
+    return socket;
   },
   set: () => {
     socket = undefined;

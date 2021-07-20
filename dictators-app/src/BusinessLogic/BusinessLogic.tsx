@@ -3,9 +3,9 @@ import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 import { useHistory } from 'react-router-dom';
 import { currentGameSocket } from '../store/selectors';
 import {
-  appState, connectEventState, gameState, lobbyState, premovesState, scoreState,
+  appState, connectEventState, gameSocketUrlState, gameState, lobbyState, premovesState, scoreState,
 } from '../store/atoms';
-import { ILobby, IPlayer } from '../resources/types/types';
+import { IGame, ILobby, IPlayer } from '../resources/types/types';
 
 const changeUser = (lobby: ILobby, setLobby: SetterOrUpdater<ILobby>,
   changedPlayer: IPlayer) => {
@@ -22,6 +22,35 @@ const changeUser = (lobby: ILobby, setLobby: SetterOrUpdater<ILobby>,
   }
 };
 
+const connectTick = (setGame: SetterOrUpdater<IGame>, gameSocketUrl: string) => {
+  const gameSocket = new WebSocket(gameSocketUrl);
+
+  gameSocket.onopen = () => {
+    console.log('tick socket is connecting');
+
+    gameSocket.send(JSON.stringify({
+      event: 'START_TICK',
+      message: '',
+    }));
+  };
+
+  gameSocket.onmessage = function onMessage(e) {
+    let data = JSON.parse(e.data);
+    console.log('recieved new message', data);
+    data = data.payload;
+    const { message } = data;
+    const { event } = data;
+    switch (event) {
+      case 'LOAD_MAP':
+        console.log('trying to load map');
+        setGame({ game: message });
+        break;
+      default:
+        console.log('No event');
+    }
+  };
+};
+
 export const connect = () => {
   const [, setGame] = useRecoilState(gameState);
   const gameSocket = useRecoilValue(currentGameSocket);
@@ -31,6 +60,7 @@ export const connect = () => {
   const [lobby, setLobby] = useRecoilState(lobbyState);
   const [, setPremoves] = useRecoilState(premovesState);
   const openEvent = useRecoilValue(connectEventState);
+  const gameSocketUrl = useRecoilValue(gameSocketUrlState);
 
   gameSocket.onopen = function open() {
     console.log('WebSockets connection created.', openEvent);
@@ -69,6 +99,7 @@ export const connect = () => {
     switch (event) {
       case 'START':
         history.push('/game');
+        // connectTick(setGame, gameSocketUrl);
         break;
       case 'END':
         alert(message);
@@ -106,6 +137,7 @@ export const connect = () => {
         }));
         break;
       case 'JOIN_USER':
+      case 'EXIT_USER':
         console.log('this are connected users', message);
         setLobby({ id: message.id, players: message.players });
         break;
@@ -120,6 +152,9 @@ export const connect = () => {
       case 'USER_NOT_READY':
         console.log('this user is not ready', message);
         changeUser(lobby, setLobby, message);
+        break;
+      case 'START_TICKING_BRO':
+        connectTick(setGame, gameSocketUrl);
         break;
       default:
         console.log('No event');
