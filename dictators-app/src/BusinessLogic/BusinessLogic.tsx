@@ -137,6 +137,7 @@ export const connect = () => {
         }));
         break;
       case 'JOIN_USER':
+      case 'EXIT_USER':
         console.log('this are connected users', message);
         setLobby({ id: message.id, players: message.players });
         break;
