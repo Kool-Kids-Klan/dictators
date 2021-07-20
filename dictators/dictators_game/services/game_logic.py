@@ -26,7 +26,6 @@ class Game:
         self.tick_n = 0
         self.winner = None
 
-
     def map_as_json(self):
         map_json = []
         for row in self.map:
@@ -37,6 +36,8 @@ class Game:
                     'color': tile.owner.color if tile.owner else 'gray',
                     'army': tile.army
                 })
+            map_json.append(row_json)
+        return map_json
 
     def _get_player_by_username(self, username: str) -> Player:
         """
