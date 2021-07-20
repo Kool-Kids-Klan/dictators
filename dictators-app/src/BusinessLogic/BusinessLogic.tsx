@@ -52,7 +52,7 @@ const connectTick = (setGame: SetterOrUpdater<IGame>, gameSocketUrl: string) => 
 };
 
 export const connect = () => {
-  const [, setGame] = useRecoilState(gameState);
+  const [{ game }, setGame] = useRecoilState(gameState);
   const gameSocket = useRecoilValue(currentGameSocket);
   const { username } = useRecoilValue(appState);
   const [, setScoreBoard] = useRecoilState(scoreState);
@@ -155,6 +155,9 @@ export const connect = () => {
         break;
       case 'START_TICKING_BRO':
         connectTick(setGame, gameSocketUrl);
+        break;
+      case 'GAME_OVER':
+        setGame({ isOver: true, winner: message, game });
         break;
       default:
         console.log('No event');
