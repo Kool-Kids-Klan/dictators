@@ -66,7 +66,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                 await self.user_won(user)
                 await self.channel_layer.group_send(self.room_group_name, {
                     'type': 'send_message',
-                    'message': winner,
+                    'message': {'winner': winner, 'game_map': self.game.map_as_json()},
                     'event': 'GAME_OVER',
                 })
                 await self.game_end(user)

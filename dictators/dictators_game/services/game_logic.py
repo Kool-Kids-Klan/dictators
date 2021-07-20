@@ -26,6 +26,18 @@ class Game:
         self.tick_n = 0
         self.winner = None
 
+
+    def map_as_json(self):
+        map_json = []
+        for row in self.map:
+            row_json = []
+            for tile in row:
+                row_json.append({
+                    'terrain': tile.terrain,
+                    'color': tile.owner.color if tile.owner else 'gray',
+                    'army': tile.army
+                })
+
     def _get_player_by_username(self, username: str) -> Player:
         """
         :param username: username of the requested player
