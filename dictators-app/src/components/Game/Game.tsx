@@ -12,7 +12,7 @@ import { currentGameSocket } from '../../store/selectors';
 import GameMenu from './GameMenu';
 
 const Game = () => {
-  const { game } = useRecoilValue(gameState);
+  const { isOver, game } = useRecoilValue(gameState);
   const [premoves, setPremoves] = useRecoilState(premovesState);
   const scores = useRecoilValue(scoreState);
   const { username } = useRecoilValue(appState);
@@ -115,7 +115,7 @@ const Game = () => {
     }
   };
 
-  const gameMenu = (menu) ? (
+  const gameMenu = (menu || isOver) ? (
     <GameMenu />
   ) : <></>;
 

@@ -21,6 +21,7 @@ export const lobbyState = atom<ILobby>({
 export const gameState = atom<IGame>({
   key: 'game',
   default: {
+    isOver: false,
     game: [],
   },
 });
