@@ -47,6 +47,7 @@ class Game:
         players_alive = self._get_players_alive()
         if len(players_alive) == 1:
             self.winner = players_alive[0]
+            self.winner.premoves.clear()
 
     def _assign_capitals(self) -> None:
         """
@@ -85,7 +86,8 @@ class Game:
         x, y = tile
         for x_shift in range(-1, 2):
             for y_shift in range(-1, 2):
-                if self.map[y + y_shift][x + x_shift].owner == player:
+                if (self._are_valid_coordinates(x+x_shift, y+y_shift) and
+                        self.map[y + y_shift][x + x_shift].owner == player):
                     return True
         return False
 
