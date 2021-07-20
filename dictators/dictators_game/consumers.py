@@ -27,11 +27,19 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         self.game_db = None
 
     @database_sync_to_async
-    def game_end(self, winner):
+    def save_db_model(self, model):
+        model.save()
+
+    @database_sync_to_async
+    def add_participants_to_game(self, participants):
+        for participant in participants:
+            self.game_db.participants.add(participant)
+
+    async def game_end(self, user):
         self.game_db.ended_at = datetime.datetime.now()
-        self.game_db.replay_data = 'tak to je riadna sracka'
-        self.game_db.winner = self.get_user_db(winner)
-        self.game_db.save()
+        self.game_db.winner = user
+        # models.Game(**self.game_db)
+        await self.save_db_model(self.game_db)
 
     async def tick(self):
         while True:
@@ -61,7 +69,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                     'message': winner,
                     'event': 'GAME_OVER',
                 })
-                await self.game_end(winner)
+                await self.game_end(user)
                 del GAMES[self.room_name]
                 await self.disconnect(1000)
 
@@ -282,9 +290,10 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
             GAMES[self.room_name] = self.game
             participants = [player.user for player in self.lobby.get_all_players()]
 
-            self.game_db = models.Game()
-            self.game_db.started_at = datetime.datetime.now()
-            self.game_db.participants = participants
+            self.game_db = models.Game(started_at=datetime.datetime.now(),
+                                       replay_data='to je sracka')
+            await self.save_db_model(self.game_db)
+            await self.add_participants_to_game(participants)
 
             await self.channel_layer.group_send(self.room_group_name, {
                 'type': 'send_start',
