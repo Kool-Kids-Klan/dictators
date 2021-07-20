@@ -21,6 +21,8 @@ export interface IGameTile {
 }
 
 export interface IGame {
+  isOver?: boolean
+  winner?: string
   game: IGameTile[][]
 }
 
