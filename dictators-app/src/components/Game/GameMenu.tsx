@@ -25,7 +25,7 @@ const GameMenu = () => {
       {winner}
     </span>
   ) : (
-    <Button type="button" onClick={surrender}>Surrender</Button>
+    <button className="surrender-btn" type="button" onClick={surrender}>Surrender</button>
   );
 
   return (

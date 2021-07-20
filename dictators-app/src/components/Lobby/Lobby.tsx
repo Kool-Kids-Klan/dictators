@@ -31,22 +31,19 @@ const Lobby = () => {
 
   return (
     <div className="lobby">
-      <h1>This is game lobby</h1>
-      <h2>
+      <header className="lobby__header">Game Lobby</header>
+      <span className="lobby__info">
+        Lobby code:
+        {' '}
         {gameId}
-      </h2>
-      <hr />
-      {playersBlocks}
-      <ToggleButton
-        type="checkbox"
-        checked={ready}
-        variant="outline-primary"
-        value={1}
-        onChange={switchReady}
-      >
-        {(ready) ? 'Ready' : 'Unready'}
-      </ToggleButton>
-      <ExitButton />
+      </span>
+      <div className="lobby__players">
+        {playersBlocks}
+      </div>
+      <div className="lobby__controls">
+        <button className={ready ? 'ready-btn ready' : 'ready-btn notready'} onClick={switchReady} type="submit">{(ready) ? 'Ready' : 'Unready'}</button>
+        <ExitButton />
+      </div>
     </div>
   );
 };

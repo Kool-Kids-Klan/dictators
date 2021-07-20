@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SetterOrUpdater } from 'recoil';
+import { LinkContainer } from 'react-router-bootstrap';
 import { LEADERBOARD_URL } from '../../utils/endpoints';
 import LeaderboardItem from './LeaderboardItem';
 
@@ -17,16 +17,27 @@ const Leaderboard = () => {
       const leadersData = await leadersRequest.json();
       setLeaders(leadersData);
     }
+    getLeaders();
   });
   return (
     <div className="leaderboard">
-      {leaders.map((leader) => (
+      <header className="leaderboard__header">
+        Leaderboard
+      </header>
+      {leaders.map((leader, index) => (
         <LeaderboardItem
+          key={leader.username}
           username={leader.username}
           games_won={leader.games_won}
           games_played={leader.games_played}
+          index={index}
         />
       ))}
+      <LinkContainer to="/">
+        <button className="home-btn" type="button">
+          Home
+        </button>
+      </LinkContainer>
     </div>
   );
 };
