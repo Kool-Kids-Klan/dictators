@@ -372,16 +372,17 @@ class Game:
         :return: the map for each player as they see it,
                  along with the updated scoreboard
         """
-        if self.winner:
-            raise ValueError("Game already ended.")
-        for player in self._get_players_alive():
-            self._make_move(player)
-        if self.tick_n % 2 == 0 and self.tick_n != 0:
-            self.round_n += 1
-            self._recruit(barracks_only=True)
-            if self.round_n % 25 == 0:
-                self._recruit(barracks_only=False)
-        self.tick_n += 1
+        # if self.winner:
+        #     raise ValueError("Game already ended.")
+        if not self.winner:
+            for player in self._get_players_alive():
+                self._make_move(player)
+            if self.tick_n % 2 == 0 and self.tick_n != 0:
+                self.round_n += 1
+                self._recruit(barracks_only=True)
+                if self.round_n % 25 == 0:
+                    self._recruit(barracks_only=False)
+            self.tick_n += 1
         return {
             "maps": {
                 player.get_username(): self._get_visible_tiles(player)
