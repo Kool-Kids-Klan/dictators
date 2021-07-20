@@ -7,6 +7,7 @@ import Register from './components/Pages/Auth/Register';
 import Confirmation from './components/Pages/Auth/Confirmation';
 import Game from './components/Game/Game';
 import Lobby from './components/Lobby/Lobby';
+import Leaderboard from './components/Pages/Leaderboard';
 
 const Routes = () => (
   <Switch>
@@ -27,6 +28,9 @@ const Routes = () => (
     </Route>
     <Route exact path="/lobby">
       <Lobby />
+    </Route>
+    <Route exact path="/leaderboard">
+      <Leaderboard />
     </Route>
     <Route>
       <NotFound />

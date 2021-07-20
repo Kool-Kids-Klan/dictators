@@ -32,7 +32,10 @@ const MainMenu = () => {
       <LinkContainer to="/lobby">
         <button className="menu__btn" type="button" onClick={() => connectSocket('CREATE_ROOM', `${connectionString}${makeId(5)}/`)}>Create Lobby</button>
       </LinkContainer>
-      <button className="menu__btn" type="button">Leaderboards</button>
+
+      <LinkContainer to="/leaderboard">
+        <button className="menu__btn" type="button">Leaderboard</button>
+      </LinkContainer>
     </div>
   );
 };
