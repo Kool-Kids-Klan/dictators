@@ -66,7 +66,7 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                 await self.user_won(user)
                 await self.channel_layer.group_send(self.room_group_name, {
                     'type': 'send_message',
-                    'message': winner,
+                    'message': {'winner': winner, 'map': self.game.map_as_json()},
                     'event': 'GAME_OVER',
                 })
                 await self.game_end(user)
@@ -205,6 +205,9 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         from_tile = (message['coor'][1], message['coor'][0])
         self.game.submit_move(username, from_tile, action)
 
+    async def surrender_player(self, username):
+        self.game.surrender(username)
+
     async def connect(self):
         print('User is trying to connect to room')
 
@@ -311,6 +314,9 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
             loop = asyncio.get_event_loop()
             self.task = loop.create_task(self.tick())
+
+        if event == 'SURRENDER':
+            await self.surrender_player(message)
 
     async def send_start(self, res):
         await self.start_game()
