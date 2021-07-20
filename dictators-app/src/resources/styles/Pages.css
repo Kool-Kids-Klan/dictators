@@ -101,6 +101,11 @@
     background-color: var(--color-primary);
 }
 
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+}
+
 .leaderboard__header {
     text-align: center;
 }
@@ -122,7 +127,14 @@
 
 .home-btn {
     color: var(--color-primary);
+    font-size: 3rem;
+    text-align: center;
  }
+
+ .home-btn:hover {
+    color: var(--color-secondary);
+ }
+
 .lobby__players {
     display: flex;
     justify-content: center;
