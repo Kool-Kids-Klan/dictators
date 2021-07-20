@@ -157,7 +157,7 @@ export const connect = () => {
         connectTick(setGame, gameSocketUrl);
         break;
       case 'GAME_OVER':
-        setGame({ isOver: true, winner: message, game });
+        setGame({ isOver: true, winner: message.winner, game: message.map });
         break;
       default:
         console.log('No event');
