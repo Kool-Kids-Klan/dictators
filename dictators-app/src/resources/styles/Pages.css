@@ -9,7 +9,8 @@
 }
 
 .lander__header,
-.confirmation__header {
+.confirmation__header,
+.leaderboard__header {
     font-size: 8rem;
 }
 
@@ -92,3 +93,26 @@
     color: var(--color-passive);
     background-color: var(--color-primary);
 }
+
+.leaderboard__header {
+    text-align: center;
+}
+
+.leaderboard__item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+}
+
+.leaderboard__user,
+.leaderboard__games-won,
+.leaderboard__games-played {
+    display: block;
+    color: var(--color-primary);
+    font-size: 2rem;
+    text-align: center;
+}
+
+.home-btn {
+    color: var(--color-primary);
+ }
