@@ -26,6 +26,23 @@ class Game:
         self.tick_n = 0
         self.winner = None
 
+    def map_as_json(self):
+        map_json = []
+        for row in self.map:
+            row_json = []
+            for tile in row:
+                tile_json = {
+                    'terrain': tile.terrain,
+                    'color': tile.owner.color if tile.owner else 'gray',
+                    'army': tile.army
+                }
+                if not tile.army:
+                    tile_json.pop('army')
+                row_json.append(tile_json)
+
+            map_json.append(row_json)
+        return map_json
+
     def _get_player_by_username(self, username: str) -> Player:
         """
         :param username: username of the requested player
@@ -372,16 +389,17 @@ class Game:
         :return: the map for each player as they see it,
                  along with the updated scoreboard
         """
-        if self.winner:
-            raise ValueError("Game already ended.")
-        for player in self._get_players_alive():
-            self._make_move(player)
-        if self.tick_n % 2 == 0 and self.tick_n != 0:
-            self.round_n += 1
-            self._recruit(barracks_only=True)
-            if self.round_n % 25 == 0:
-                self._recruit(barracks_only=False)
-        self.tick_n += 1
+        # if self.winner:
+        #     raise ValueError("Game already ended.")
+        if not self.winner:
+            for player in self._get_players_alive():
+                self._make_move(player)
+            if self.tick_n % 2 == 0 and self.tick_n != 0:
+                self.round_n += 1
+                self._recruit(barracks_only=True)
+                if self.round_n % 25 == 0:
+                    self._recruit(barracks_only=False)
+            self.tick_n += 1
         return {
             "maps": {
                 player.get_username(): self._get_visible_tiles(player)
