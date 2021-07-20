@@ -31,11 +31,15 @@ class Game:
         for row in self.map:
             row_json = []
             for tile in row:
-                row_json.append({
+                tile_json = {
                     'terrain': tile.terrain,
                     'color': tile.owner.color if tile.owner else 'gray',
                     'army': tile.army
-                })
+                }
+                if not tile.army:
+                    tile_json.pop('army')
+                row_json.append(tile_json)
+
             map_json.append(row_json)
         return map_json
 
