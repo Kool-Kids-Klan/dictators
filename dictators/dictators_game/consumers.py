@@ -205,6 +205,9 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
         from_tile = (message['coor'][1], message['coor'][0])
         self.game.submit_move(username, from_tile, action)
 
+    async def surrender_player(self, username):
+        self.game.surrender(username)
+
     async def connect(self):
         print('User is trying to connect to room')
 
@@ -311,6 +314,9 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
 
             loop = asyncio.get_event_loop()
             self.task = loop.create_task(self.tick())
+
+        if event == 'SURRENDER':
+            await self.surrender_player(message)
 
     async def send_start(self, res):
         await self.start_game()
