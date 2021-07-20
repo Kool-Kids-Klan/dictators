@@ -18,7 +18,7 @@ const Leaderboard = () => {
       setLeaders(leadersData);
     }
     getLeaders();
-  });
+  }, []);
   return (
     <div className="leaderboard">
       <header className="leaderboard__header">
