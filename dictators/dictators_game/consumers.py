@@ -107,6 +107,11 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
     def get_user_db(self, username):
         return get_user(username)
 
+    @database_sync_to_async
+    def user_joined_game(self, user):
+        user.games_played += 1
+        user.save()
+
     async def add_user_to_lobby(self, user):
         self.lobby.add_player(user)
         player_dict = [player.as_json() for player in self.lobby.get_all_players()]
@@ -294,6 +299,9 @@ class DictatorsConsumer(AsyncJsonWebsocketConsumer):
                                        replay_data='to je sracka')
             await self.save_db_model(self.game_db)
             await self.add_participants_to_game(participants)
+
+            for user in participants:
+                await self.user_joined_game(user)
 
             await self.channel_layer.group_send(self.room_group_name, {
                 'type': 'send_start',
