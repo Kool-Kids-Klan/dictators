@@ -17,8 +17,8 @@ class User(models.Model):
 
 
 class Game(models.Model):
-    started_at: models.DateTimeField()
-    ended_at: models.DateTimeField()
-    replay_data: models.TextField()
-    participants: models.ManyToManyField(User)
-    winner: models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
+    started_at = models.DateTimeField()
+    ended_at = models.DateTimeField(null=True)
+    replay_data = models.TextField(null=True)
+    participants = models.ManyToManyField(User, related_name='participants')
+    winner = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user), null=True)
