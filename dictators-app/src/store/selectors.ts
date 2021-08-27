@@ -1,8 +1,9 @@
 import { selector } from 'recoil';
 import { gameSocketUrlState } from './atoms';
+import { BACKEND_URL } from '../utils/endpoints';
 
-const webSocketUrl = `${window.location.hostname}:8000`;
-export const connectionString = `ws://${webSocketUrl}/ws/play/`;
+const webSocketUrl = `${BACKEND_URL}`;
+export const connectionString = `wss://${webSocketUrl}/ws/play/`;
 
 let socket: WebSocket | undefined;
 
