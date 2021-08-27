@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/Dictators/static/css/main.d62b90fb.chunk.css",
-    "main.js": "/Dictators/static/js/main.50dba6da.chunk.js",
-    "main.js.map": "/Dictators/static/js/main.50dba6da.chunk.js.map",
-    "runtime-main.js": "/Dictators/static/js/runtime-main.9ead3c18.js",
-    "runtime-main.js.map": "/Dictators/static/js/runtime-main.9ead3c18.js.map",
-    "static/css/2.d45d6843.chunk.css": "/Dictators/static/css/2.d45d6843.chunk.css",
-    "static/js/2.8f207c44.chunk.js": "/Dictators/static/js/2.8f207c44.chunk.js",
-    "static/js/2.8f207c44.chunk.js.map": "/Dictators/static/js/2.8f207c44.chunk.js.map",
-    "index.html": "/Dictators/index.html",
-    "static/css/2.d45d6843.chunk.css.map": "/Dictators/static/css/2.d45d6843.chunk.css.map",
-    "static/css/main.d62b90fb.chunk.css.map": "/Dictators/static/css/main.d62b90fb.chunk.css.map",
-    "static/js/2.8f207c44.chunk.js.LICENSE.txt": "/Dictators/static/js/2.8f207c44.chunk.js.LICENSE.txt",
-    "static/media/arrow.85582aed.svg": "/Dictators/static/media/arrow.85582aed.svg",
-    "static/media/Game.css": "/Dictators/static/media/questionmark.4858b582.svg"
+    "main.css": "/Dictors/static/css/main.1b03a138.chunk.css",
+    "main.js": "/Dictors/static/js/main.50dba6da.chunk.js",
+    "main.js.map": "/Dictors/static/js/main.50dba6da.chunk.js.map",
+    "runtime-main.js": "/Dictors/static/js/runtime-main.3baace17.js",
+    "runtime-main.js.map": "/Dictors/static/js/runtime-main.3baace17.js.map",
+    "static/css/2.d45d6843.chunk.css": "/Dictors/static/css/2.d45d6843.chunk.css",
+    "static/js/2.8f207c44.chunk.js": "/Dictors/static/js/2.8f207c44.chunk.js",
+    "static/js/2.8f207c44.chunk.js.map": "/Dictors/static/js/2.8f207c44.chunk.js.map",
+    "index.html": "/Dictors/index.html",
+    "static/css/2.d45d6843.chunk.css.map": "/Dictors/static/css/2.d45d6843.chunk.css.map",
+    "static/css/main.1b03a138.chunk.css.map": "/Dictors/static/css/main.1b03a138.chunk.css.map",
+    "static/js/2.8f207c44.chunk.js.LICENSE.txt": "/Dictors/static/js/2.8f207c44.chunk.js.LICENSE.txt",
+    "static/media/arrow.85582aed.svg": "/Dictors/static/media/arrow.85582aed.svg",
+    "static/media/Game.css": "/Dictors/static/media/questionmark.4858b582.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.9ead3c18.js",
+    "static/js/runtime-main.3baace17.js",
     "static/css/2.d45d6843.chunk.css",
     "static/js/2.8f207c44.chunk.js",
-    "static/css/main.d62b90fb.chunk.css",
+    "static/css/main.1b03a138.chunk.css",
     "static/js/main.50dba6da.chunk.js"
   ]
 }
